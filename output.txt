@@ -1,0 +1,7 @@
+Starting program . . . 
+I have a spin of 22.915517 degrees about a spin axis of 29.029118 degrees:  3819.252890 RPMs
+
+Should say
+
+I have a spin of 22.915517 degrees about a spin axis of 29.029118 degrees:  3819.252890 RPMs
+Finished program!
