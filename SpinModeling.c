@@ -192,9 +192,22 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   
   // Normalized all 4 points (2 points, 2 times) to the origin and unity.
   point1Time1   = vectorSubtract(point1Time1,ballCenterTime1);
+  if (LIB_SPINMODELING_DEBUG)
+    {
+      printf("Vector Subtract p1t1 - centert1 = %f,%f,%f\n",point1Time1.x,point1Time1.y,point1Time1.z);
+    }
   point1Time1.z = sqrt(ballRadiusTime1*ballRadiusTime1 - vectorMag(point1Time1)*vectorMag(point1Time1));
+  if (LIB_SPINMODELING_DEBUG)
+    {
+      printf("radius squared = %f\n",ballRadiusTime1*ballRadiusTime1);
+      printf("Vector normalize to radius = %f,%f,%f\n",point1Time1.x,point1Time1.y,point1Time1.z);
+    }
   point1Time1   = vectorScalarDivide(point1Time1,vectorMag(point1Time1)); 
-
+  if (LIB_SPINMODELING_DEBUG)
+    {
+      printf("Vector normalize to radius of 1 = %f,%f,%f\n",point1Time1.x,point1Time1.y,point1Time1.z);
+    }
+  
   point2Time1 = vectorSubtract(point2Time1,ballCenterTime1);
   point2Time1.z = sqrt(ballRadiusTime1*ballRadiusTime1 - vectorMag(point2Time1)*vectorMag(point2Time1));
   point2Time1   = vectorScalarDivide(point2Time1,vectorMag(point2Time1));;
@@ -298,7 +311,14 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   //spinMag2 = acos(vectorDotProduct(point2Time1Prime,point2Time2Prime)/vectorMag(point2Time1Prime)/vectorMag(point2Time2Prime));
 
   // Spin axis (for now) is only the phi component.  Convert to degreees.
-  spinAxisInDegrees = spinAxisSpherical.phi*180/M_PI;
+  if (spinAxisSpherical.theta < 0)
+    {
+      spinAxisInDegrees = -spinAxisSpherical.phi*180/M_PI;
+    }
+    else
+    {
+      spinAxisInDegrees = spinAxisSpherical.phi*180/M_PI;
+    }
 
   // Calculate RPMs
   spinInRPMs = (spinMagInDegrees / 360) / (deltaTimeInSeconds / 60);

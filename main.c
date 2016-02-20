@@ -19,58 +19,57 @@ int main()
 
   spinDescription mySpin;
 
-  // Set the center of the golf ball in the xy coordiantes of the image.
-  // (0,0) is in the lower left for the first image.
-  ballCenterTime1.x=274;//1;
-  ballCenterTime1.y=173;//2;
-  ballCenterTime1.z=0;
+  int testNum;
+  
+  testNum = 1;
 
-  // Set the center of the golf ball in the xy coordiantes of the image.
-  // (0,0) is in the lower left for the second image.
-  ballCenterTime2.x=271;//2;
-  ballCenterTime2.y=172;//4;
-  ballCenterTime2.z=0;
+  if (testNum == 1)
+    {
+      // Set the center of the golf ball in the xy coordiantes of the image.
+      // (0,0) is in the lower left for the first image.
+      ballCenterTime1.x=89.0;
+      ballCenterTime1.y=188.0;
+      ballCenterTime1.z=0.0;
+      
+      // Set the center of the golf ball in the xy coordiantes of the image.
+      // (0,0) is in the lower left for the second image.
+      ballCenterTime2.x=410.0;
+      ballCenterTime2.y=296.0;
+      ballCenterTime2.z=0.0;
 
-  // Set the ball radius for both images.
-  ballRadiusTime1 = 71;//1;
-  ballRadiusTime2 = 76;//1;
+      // Set the ball radius for both images.
+      ballRadiusTime1 = 81.0/2.0;
+      ballRadiusTime2 = 92.0/2.0;
 
-  // Set the known point #1 in the image in the first image.
-  // Note:  ONLY SET THE X AND Y POINTS. SET Z = 0;
-  // Note, here for test I am adding the center, but you only
-  // have to define the vector from the image.  The vectorAdd is not needed.
-  point1Time1.x = 243;//-0.25;     
-  point1Time1.y = 177;//0.25;
-  point1Time1.z = 0;//0.935414346693485;
-  //point1Time1 = vectorAdd(point1Time1,ballCenterTime1);
-
-  // Set the known point #2 in the image in the first image.
-  // Note:  ONLY SET THE X AND Y POINTS. SET Z = 0;
-  // Note, here for test I am adding the center, but you only
-  // have to define the vector from the image.  The vectorAdd is not needed.
-  point2Time1.x = 305;//-.25;
-  point2Time1.y = 170;//-.25;
-  point2Time1.z = 0;//0.935414346693485;
-  //point2Time1 = vectorAdd(point2Time1,ballCenterTime1);
-
-  // Set the known point #1 in the image in the second image.
-  // Note:  ONLY SET THE X AND Y POINTS. SET Z = 0;
-  // Note, here for test I am adding the center, but you only
-  // have to define the vector from the image.  The vectorAdd is not needed.
-  point1Time2.x = 242;//-0.187199408023956;     
-  point1Time2.y = 152;//0.0119597071948924;
-  point1Time2.z = 0;//0.982249126769423;
-  //point1Time2 = vectorAdd(point1Time2,ballCenterTime2);
-
-  // Set the known point #2 in the image in the second image.
-  // Note:  ONLY SET THE X AND Y POINTS. SET Z = 0;
-  // Note, here for test I am adding the center, but you only
-  // have to define the vector from the image.  The vectorAdd is not needed.
-  point2Time2.x = 304;//0.0424674725176793;
-  point2Time2.y = 183;//-0.425239700829063;
-  point2Time2.z = 0;//0.90408390684536;
-  //point2Time2 = vectorAdd(point2Time2,ballCenterTime2);
-
+      // Set the known point #1 in the image in the first image.
+      // Note:  ONLY SET THE X AND Y POINTS. SET Z = 0;
+      point1Time1.x = 59.0;
+      point1Time1.y = 195.0;
+      point1Time1.z = 0.0;
+      
+      // Set the known point #2 in the image in the first image.
+      // Note:  ONLY SET THE X AND Y POINTS. SET Z = 0;
+      point2Time1.x = 86.0;
+      point2Time1.y = 194.0;
+      point2Time1.z = 0.0;
+      
+      // Set the known point #1 in the image in the second image.
+      // Note:  ONLY SET THE X AND Y POINTS. SET Z = 0;
+      // Note, here for test I am adding the center, but you only
+      // have to define the vector from the image.  The vectorAdd is not needed.
+      point1Time2.x = 398.0;
+      point1Time2.y = 269.0;
+      point1Time2.z = 0.0;
+      
+      // Set the known point #2 in the image in the second image.
+      // Note:  ONLY SET THE X AND Y POINTS. SET Z = 0;
+      // Note, here for test I am adding the center, but you only
+      // have to define the vector from the image.  The vectorAdd is not needed.
+      point2Time2.x = 389.0;
+      point2Time2.y = 307.0;
+      point2Time2.z = 0.0;
+    }
+  
   deltaTimeInSeconds = 0.001;
 
   // Pass in the parameters as described above.
@@ -80,7 +79,11 @@ int main()
 
   printf("I have a spin of %f degrees about a spin axis of %f degrees:  %f RPMs\n",mySpin.spinInDegrees,mySpin.spinAxisInDegrees,mySpin.spinInRPMs);
   printf("\nShould say\n\n");
-  printf("I have a spin of 22.915517 degrees about a spin axis of 29.029118 degrees:  3819.252890 RPMs\n");
+
+  if (testNum == 1)
+    {
+      printf("I have a spin of 116.496530 degrees about a spin axis of -19.856593 degrees:  19416.088404 RPMs\n");
+    }
   printf("Finished program!\n"); 
 
   return 0;
