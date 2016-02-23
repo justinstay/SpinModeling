@@ -2,6 +2,8 @@
 #define LIB_SPINMODELING
 /* ------------------ #Define Statments ------------------------- */
 #define LIB_SPINMODELING_DEBUG 0
+#define LIB_SPINMODELING_NORMALIZEARC 1
+#define LIB_SPINMODELING_ARCLENGTHINDEGREES 40.0
 /* ------------------ #Define Statments ------------------------- */
 
 /* ------------------ #Include Statments ------------------------ */

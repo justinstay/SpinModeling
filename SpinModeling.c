@@ -150,6 +150,16 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
 				    double deltaTimeInSeconds)
 {
 
+  // Defines the midpoint on the arc connection points 1 and time at time 1, and at time 1
+  vector time1Midpoint;
+  vector time2Midpoint;
+
+  // Defines a vector normal to the points at time #1 and time #2 (cross product)
+  vector time1Normal;
+  vector time2Normal;
+  sphericalCoordinate time1Normal_spherical;
+  sphericalCoordinate time2Normal_spherical;
+
   // Defines the midpoint on the arc connecting a point at time #1 and time #2.
   // Normalized to unity and centered at the origin.
   vector point1MidPoint;
@@ -182,6 +192,8 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
 
   // Amount of spin calculated between the two times
   double spinMagInDegrees;
+  double spinMagInDegrees_point2;
+
   // Spin axis in degrees
   double spinAxisInDegrees;
   // Spin in RPMs
@@ -192,22 +204,9 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   
   // Normalized all 4 points (2 points, 2 times) to the origin and unity.
   point1Time1   = vectorSubtract(point1Time1,ballCenterTime1);
-  if (LIB_SPINMODELING_DEBUG)
-    {
-      printf("Vector Subtract p1t1 - centert1 = %f,%f,%f\n",point1Time1.x,point1Time1.y,point1Time1.z);
-    }
   point1Time1.z = sqrt(ballRadiusTime1*ballRadiusTime1 - vectorMag(point1Time1)*vectorMag(point1Time1));
-  if (LIB_SPINMODELING_DEBUG)
-    {
-      printf("radius squared = %f\n",ballRadiusTime1*ballRadiusTime1);
-      printf("Vector normalize to radius = %f,%f,%f\n",point1Time1.x,point1Time1.y,point1Time1.z);
-    }
   point1Time1   = vectorScalarDivide(point1Time1,vectorMag(point1Time1)); 
-  if (LIB_SPINMODELING_DEBUG)
-    {
-      printf("Vector normalize to radius of 1 = %f,%f,%f\n",point1Time1.x,point1Time1.y,point1Time1.z);
-    }
-  
+    
   point2Time1 = vectorSubtract(point2Time1,ballCenterTime1);
   point2Time1.z = sqrt(ballRadiusTime1*ballRadiusTime1 - vectorMag(point2Time1)*vectorMag(point2Time1));
   point2Time1   = vectorScalarDivide(point2Time1,vectorMag(point2Time1));;
@@ -228,7 +227,33 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
       printf("p2t1 x=%f, y=%f, z=%f\n",point2Time1.x,point2Time1.y,point2Time1.z);
       printf("p2t2 x=%f, y=%f, z=%f\n",point2Time2.x,point2Time2.y,point2Time2.z);
     }
+
+  // We'll normalize the arcs (defined by point 1 and point 2 at time 1, . . .) to a default arc length
   
+  if (LIB_SPINMODELING_NORMALIZEARC)
+    {
+      // Calculate the midpoint of each arc at time 1, and at time 2
+      time1Midpoint = vectorAdd(point1Time1, point2Time1);
+      time1Midpoint = vectorScalarDivide(time1Midpoint,vectorMag(time1Midpoint));
+      time2Midpoint = vectorAdd(point1Time2, point2Time2);
+      time2Midpoint = vectorScalarDivide(time2Midpoint,vectorMag(time2Midpoint));
+
+      // Calculate the vector normal to the arc defined at time 1, and at time 2
+      time1Normal = vectorCrossProduct(point1Time1,point2Time1);
+      time2Normal = vectorCrossProduct(point1Time2,point2Time2);
+  
+      // We'll get the spherical cooridantes of the above vector
+      time1Normal_spherical = vectorToSpherical(time1Normal);
+      time2Normal_spherical = vectorToSpherical(time2Normal);
+
+      // Create equal arc lengths at each time by redefining the endpoints but keepin the same midpoint and great circle (defined by the arc)
+      point1Time1 = rotateZ(rotateY(rotateZ(rotateY(rotateZ(time1Midpoint,-time1Normal_spherical.theta),-time1Normal_spherical.phi),-LIB_SPINMODELING_ARCLENGTHINDEGREES/2.0*M_PI/180.0),time1Normal_spherical.phi),time1Normal_spherical.theta);
+
+      point2Time1 = rotateZ(rotateY(rotateZ(rotateY(rotateZ(time1Midpoint,-time1Normal_spherical.theta),-time1Normal_spherical.phi),LIB_SPINMODELING_ARCLENGTHINDEGREES/2.0*M_PI/180.0),time1Normal_spherical.phi),time1Normal_spherical.theta);
+      point1Time2 = rotateZ(rotateY(rotateZ(rotateY(rotateZ(time2Midpoint,-time2Normal_spherical.theta),-time2Normal_spherical.phi),-LIB_SPINMODELING_ARCLENGTHINDEGREES/2.0*M_PI/180.0),time2Normal_spherical.phi),time2Normal_spherical.theta);
+      point2Time2 = rotateZ(rotateY(rotateZ(rotateY(rotateZ(time2Midpoint,-time2Normal_spherical.theta),-time2Normal_spherical.phi),LIB_SPINMODELING_ARCLENGTHINDEGREES/2.0*M_PI/180.0),time2Normal_spherical.phi),time2Normal_spherical.theta);
+    }
+
   // Calculate the midpoint of the arc for a point #1 between 2 times.
   // Note, must normalize back to unity.
   point1MidPoint = vectorAdd(point1Time2,point1Time1);
@@ -254,8 +279,8 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   // Calculate the vector normal to the vectors for a point at time #1 and #2.
   point1Normal = vectorCrossProduct(point1Time1,point1Time2);
   point2Normal = vectorCrossProduct(point2Time1,point2Time2);
-   
-  // The great circle is defined by the circle that intersects the sphere
+
+   // The great circle is defined by the circle that intersects the sphere
   // that is perpendicular to this vecor.
   point1GC = vectorCrossProduct(point1Normal,point1MidPoint);
   point2GC = vectorCrossProduct(point2Normal,point2MidPoint);
@@ -308,7 +333,11 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
 
   // Spin is calculate using a dot product and convert to degrees.
   spinMagInDegrees = 180/M_PI*acos(vectorDotProduct(point1Time1Prime,point1Time2Prime)/vectorMag(point1Time1Prime)/vectorMag(point1Time2Prime));
-  //spinMag2 = acos(vectorDotProduct(point2Time1Prime,point2Time2Prime)/vectorMag(point2Time1Prime)/vectorMag(point2Time2Prime));
+  spinMagInDegrees_point2 = 180/M_PI*acos(vectorDotProduct(point2Time1Prime,point2Time2Prime)/vectorMag(point2Time1Prime)/vectorMag(point2Time2Prime));
+  if (LIB_SPINMODELING_DEBUG)
+    {
+      printf("Spin angles of %f and %f found!\n",spinMagInDegrees, spinMagInDegrees_point2);
+    }
 
   // Spin axis (for now) is only the phi component.  Convert to degreees.
   if (spinAxisSpherical.theta < 0)
@@ -336,8 +365,6 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
     }
 
   return mySpinDescription;
-
-  
 
 }
  
