@@ -128,6 +128,13 @@ vector projectXY(vector A)
    Calcules the spin direction for a set of images and two points.
    This approach uses the two point approach.  Given two points
    observed in two images, the spin and spin axis can be calculated.
+   
+   Note the conventions used for handedness.  For a right handed golfer,
+   backspin is assumed to be right hand rule positive, i.e., counter clockwise
+   in the image.  Although not specifically checked, the ball should be moving
+   right.  Conversely, for a left handed golfer, backspin is assumed to be
+   left hand rule positive, i.e., clockwise in the image.  Although not specifically
+   checked, the ball should be moving left.
 
    Input Arguments
 
@@ -139,15 +146,16 @@ vector projectXY(vector A)
    point2Time2     - vector, location in XY space indicating the postion of a point #2 @ time #2
    ballCenterTime2 - vector, location in XY space indicating the center of the ball in time #2
    ballRadiusTime2 - double, radius of ball in image @ time #2
+   handedness      - int   , 1 for right handed, otherwise left handed.
 
    Output Arguments
 
-   spinDescription - return a spin description (spin, spin axis, etc.).  See header file.
+   spinDescription - return a spin description (spin, spin axis, etc.).  See header file for more details.
    -------------------------------------------------- */
 
 spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vector ballCenterTime1, double ballRadiusTime1,
 				    vector point1Time2, vector point2Time2, vector ballCenterTime2, double ballRadiusTime2,
-				    double deltaTimeInSeconds)
+				    double deltaTimeInSeconds, int handedness)
 {
 
   // Defines the midpoint on the arc connection points 1 and time at time 1, and at time 1
@@ -354,7 +362,15 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
 
   // Define spin description struct.
   mySpinDescription.spinAxisInDegrees = spinAxisInDegrees;
-  mySpinDescription.spinInDegrees = spinMagInDegrees;
+  // Check handedness for sign change
+  if (handedness == LIB_SPINMODELING_RIGHTHANDED)
+    {
+      mySpinDescription.spinInDegrees = spinMagInDegrees;
+    }
+  else
+    {
+      mySpinDescription.spinInDegrees = -spinMagInDegrees;
+    }
   mySpinDescription.spinInRPMs = spinInRPMs;
 
   // Print results.

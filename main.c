@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include "SpinModeling.h"
 
+#define RIGHTHANDED 1
+#define LEFTHANDED -1
+
 int main()
 {
   printf("Starting program . . . \n");  
@@ -75,7 +78,7 @@ int main()
   // Pass in the parameters as described above.
   // A struct is returned with two paramters:  spinInDegrees and spinAxisInDegrees;
   // Both describe the amount of spin and spin axis between the two images.
-  mySpin = calcSpinAxisAndSpin(point1Time1, point2Time1, ballCenterTime1, ballRadiusTime1, point1Time2, point2Time2, ballCenterTime2, ballRadiusTime2,deltaTimeInSeconds);
+  mySpin = calcSpinAxisAndSpin(point1Time1, point2Time1, ballCenterTime1, ballRadiusTime1, point1Time2, point2Time2, ballCenterTime2, ballRadiusTime2,deltaTimeInSeconds,RIGHTHANDED);
 
   printf("I have a spin of %f degrees about a spin axis of %f degrees:  %f RPMs\n",mySpin.spinInDegrees,mySpin.spinAxisInDegrees,mySpin.spinInRPMs);
   printf("\nShould say\n\n");

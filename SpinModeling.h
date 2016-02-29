@@ -4,6 +4,8 @@
 #define LIB_SPINMODELING_DEBUG 0
 #define LIB_SPINMODELING_NORMALIZEARC 1
 #define LIB_SPINMODELING_ARCLENGTHINDEGREES 40.0
+#define LIB_SPINMODELING_RIGHTHANDED 1
+#define LIB_SPINMODELING_LEFTHANDED -1
 /* ------------------ #Define Statments ------------------------- */
 
 /* ------------------ #Include Statments ------------------------ */
@@ -45,6 +47,6 @@ vector rotateX(vector A,double theta);
 vector rotateY(vector A,double theta);
 vector rotateZ(vector A,double theta);
 vector projectXY(vector A);
-spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vector ballCenterTime1, double ballRadiusTime1, vector point1Time2, vector point2Time2, vector ballCenterTime2, double ballRadiusTime2, double deltaTimeInSeconds);
+spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vector ballCenterTime1, double ballRadiusTime1, vector point1Time2, vector point2Time2, vector ballCenterTime2, double ballRadiusTime2, double deltaTimeInSeconds, int handedness);
 
 #endif
