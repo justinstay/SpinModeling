@@ -1,3 +1,4 @@
+/*                 Version 2.2.0                 */
 #include <stdio.h>
 #include "SpinModeling.h"
 

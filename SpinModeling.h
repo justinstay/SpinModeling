@@ -1,3 +1,4 @@
+/*                 Version 2.2.0                 */
 #ifndef LIB_SPINMODELING
 #define LIB_SPINMODELING
 /* ------------------ #Define Statments ------------------------- */
