@@ -207,6 +207,12 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   // Spin in RPMs
   double spinInRPMs;
 
+  // Spin axis pitch in relation to ZX plane
+  double spinAxisZXPitchInDegrees;
+
+  // Y axis unit vector
+  vector yAxisUnitVector;
+
   // Output arguement.  See header file.
   spinDescription mySpinDescription;
   
@@ -347,20 +353,26 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
       printf("Spin angles of %f and %f found!\n",spinMagInDegrees, spinMagInDegrees_point2);
     }
 
-  // Spin axis (for now) is only the phi component.  Convert to degreees.
-  if (spinAxisSpherical.theta < 0)
+  // Spin axis defined as the "pitch" angle (angle between spin axis and YZ plane)
+  // Positive angle is below ZX plane for RH golfer
+  // Negative angle is above ZX plane for RH golfer
+  // Vice versa for LH golfer.
+  // In a broader sense, a positive spin axis means the ball curves to the right
+  // and a negative spin axis means the ball curves to the left.
+  yAxisUnitVector.x=0;
+  yAxisUnitVector.y=1;
+  yAxisUnitVector.z=0;
+  spinAxisZXPitchInDegrees = 90.0 - 180.0/M_PI*acos(vectorDotProduct(spinAxis,yAxisUnitVector));
+  if (handedness == LIB_SPINMODELING_RIGHTHANDED)
     {
-      spinAxisInDegrees = -spinAxisSpherical.phi*180/M_PI;
+      spinAxisInDegrees = spinAxisZXPitchInDegrees;
     }
-    else
+  else
     {
-      spinAxisInDegrees = spinAxisSpherical.phi*180/M_PI;
+      spinAxisInDegrees = -spinAxisZXPitchInDegrees;
     }
 
-  // Calculate RPMs
-  spinInRPMs = (spinMagInDegrees / 360) / (deltaTimeInSeconds / 60);
-
-  // Define spin description struct.
+    // Define spin description struct.
   mySpinDescription.spinAxisInDegrees = spinAxisInDegrees;
   // Check handedness for sign change
   if (handedness == LIB_SPINMODELING_RIGHTHANDED)
@@ -371,6 +383,9 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
     {
       mySpinDescription.spinInDegrees = -spinMagInDegrees;
     }
+
+  // Calculate RPMs
+  spinInRPMs = (mySpinDescription.spinInDegrees / 360.0) / (deltaTimeInSeconds / 60.0);
   mySpinDescription.spinInRPMs = spinInRPMs;
 
   // Print results.
