@@ -1,4 +1,4 @@
-/*                 Version 2.2.0                 */
+/*                 Version 2.2.1                 */
 #include "SpinModeling.h"
 
 // --------------------------------------------------//
@@ -366,11 +366,11 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   spinAxisZXPitchInDegrees = 90.0 - 180.0/M_PI*acos(vectorDotProduct(spinAxis,yAxisUnitVector));
   if (handedness == LIB_SPINMODELING_RIGHTHANDED)
     {
-      spinAxisInDegrees = spinAxisZXPitchInDegrees;
+      spinAxisInDegrees = -spinAxisZXPitchInDegrees;
     }
   else
     {
-      spinAxisInDegrees = -spinAxisZXPitchInDegrees;
+      spinAxisInDegrees = spinAxisZXPitchInDegrees;
     }
 
     // Define spin description struct.

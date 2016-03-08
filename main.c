@@ -1,4 +1,4 @@
-/*                 Version 2.2.0                 */
+/*                 Version 2.2.1                 */
 #include <stdio.h>
 #include "SpinModeling.h"
 
@@ -27,8 +27,9 @@ int main()
   
   // 3 - Sample #3, Khan Adjusted test case
   // 12 - Sample #12, Wil data
+  // 16 - Sample #16, Wil data
 
-  testNum = 3;
+  testNum = 16;
 
   if (testNum == 3)
     {
@@ -122,6 +123,52 @@ int main()
       point2Time2.y = 257.0;
       point2Time2.z = 0.0;
     }
+else if (testNum == 16)
+    {
+      // Set the center of the golf ball in the xy coordiantes of the image.
+      // (0,0) is in the lower left for the first image.
+      ballCenterTime1.x = 55.0;
+      ballCenterTime1.y = 172.0;
+      ballCenterTime1.z = 0.0;
+      
+      // Set the center of the golf ball in the xy coordiantes of the image.
+      // (0,0) is in the lower left for the second image.
+      ballCenterTime2.x = 390.0;
+      ballCenterTime2.y = 278.0;
+      ballCenterTime2.z = 0.0;
+
+      // Set the ball radius for both images.
+      ballRadiusTime1 = 86.0 / 2;
+      ballRadiusTime2 = 101.0 / 2;
+
+      // Set the known point #1 in the image in the first image.
+      // Note:  ONLY SET THE X AND Y POINTS. SET Z = 0;
+      point1Time1.x = 21.0;
+      point1Time1.y = 165.0;
+      point1Time1.z = 0.0;
+      
+      // Set the known point #2 in the image in the first image.
+      // Note:  ONLY SET THE X AND Y POINTS. SET Z = 0;
+      point2Time1.x = 53.0;
+      point2Time1.y = 172.0;
+      point2Time1.z = 0.0;
+      
+      // Set the known point #1 in the image in the second image.
+      // Note:  ONLY SET THE X AND Y POINTS. SET Z = 0;
+      // Note, here for test I am adding the center, but you only
+      // have to define the vector from the image.  The vectorAdd is not needed.
+      point1Time2.x = 379.0;
+      point1Time2.y = 244.0;
+      point1Time2.z = 0.0;
+      
+      // Set the known point #2 in the image in the second image.
+      // Note:  ONLY SET THE X AND Y POINTS. SET Z = 0;
+      // Note, here for test I am adding the center, but you only
+      // have to define the vector from the image.  The vectorAdd is not needed.
+      point2Time2.x = 372.0;
+      point2Time2.y = 291.0;
+      point2Time2.z = 0.0;
+    }
   
   deltaTimeInSeconds = 0.001;
 
@@ -135,11 +182,15 @@ int main()
 
   if (testNum == 3)
     {
-      printf("I have a spin of 123.418840 degrees about a spin axis of 6.964909 degrees:  20569.806726 RPMs\n");
+      printf("I have a spin of 123.418840 degrees about a spin axis of -6.964909 degrees:  20569.806726 RPMs\n");
     }
   else if (testNum == 12)
     {
-      printf("I have a spin of 97.846613 degrees about a spin axis of 13.228672 degrees:  16307.768768 RPMs\n");
+      printf("I have a spin of 97.846613 degrees about a spin axis of -13.228672 degrees:  16307.768768 RPMs\n");
+    }
+  else if(testNum = 16)
+    {
+      printf("I have a spin of 82.391591 degrees about a spin axis of 4.861891 degrees:  13731.931900 RPMs\n");
     }
   printf("Finished program!\n"); 
 
