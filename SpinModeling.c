@@ -1,4 +1,4 @@
-/*                 Version 2.2.1                 */
+/*                 Version 2.3.2                 */
 #include "SpinModeling.h"
 
 // --------------------------------------------------//
@@ -126,6 +126,77 @@ vector projectXY(vector A)
 }
 
 /* --------------------------------------------------
+   Calculates the rotation angles required for correction for the FOV, i.e. perspective.
+   The line of sight to the ball is not parallel to the optic axis.  These angles adjust for that. 
+
+   Input Arguments
+
+   ballCenter - Center of the ball in the image in pixels, with (1,1) is at the lower left
+   FOVInDegrees - Field of View in degrees from corner to corner of the image arr
+   imageHeight - The number of pixels in the height, or y direction, of the image arra
+   imageWidth - The number of pixels in the width, or x direction, of the image array
+
+   Output Arguments
+
+   FOVCorrection - the angle required to rotate detected points on the golf ball given this field of view once normalized (Centered at 0,0, radius of 1)
+   -------------------------------------------------- */
+FOVCorrection calcFOVCorrection(vector ballCenter,double FOVInDegrees,int imageWidth,int imageHeight)
+{
+  double FOVInRads;
+  // Define the center of the picture
+  vector centerOfImage;
+  // Center ball center
+  vector recenteredBallCenter;
+  // Define some angles
+  // Phi is the angle from the optic axis to the ball. If the ball center is exactly in the corner, than phi = FOV/2
+  double phi;
+  // d1 is the distance, in pixels from the center of the image to the ball
+  double d1;
+  // d2 is the distance from the lens to the ball (in pixels) to satisfy the FOV
+  double d2;
+  // d3 is the distance on the xz plane of the projection from the center to the ball
+  double d3;
+  // alpha is the rotation about the y axis that the center of the ball experiences due to the FOV.
+  double alpha;
+  // beta is the angle between the xz plane and the line of site to the ball
+  double beta;
+  // this is the return values to hold alpha and beta
+  FOVCorrection myFOVCorrection;
+
+  FOVInRads = FOVInDegrees * M_PI / 180.0;
+
+  centerOfImage.x = ((double) imageWidth + 1)/2;
+  centerOfImage.y = ((double) imageHeight +1)/2;
+  centerOfImage.z = 0;
+
+  // Normalize center of ball from center of image
+  recenteredBallCenter = vectorSubtract(ballCenter,centerOfImage);
+
+  phi = atan( tan(FOVInRads/2) / (sqrt(((double) imageHeight-1)*((double) imageHeight-1)+((double) imageWidth-1)*((double) imageWidth-1))/2) * vectorMag(recenteredBallCenter));
+  d1 = vectorMag(recenteredBallCenter);
+  d2 = d1 / tan(phi);
+  d3 = sqrt(recenteredBallCenter.x*recenteredBallCenter.x+d2*d2);
+
+  alpha = atan(recenteredBallCenter.x/d2);
+  beta = atan(recenteredBallCenter.y/d3);
+
+  myFOVCorrection.alpha = alpha;
+  myFOVCorrection.beta = beta;
+
+  if (LIB_SPINMODELING_DEBUG)
+    {
+      printf("phi = %f, d1 = %f, d2 = %f, d3 = %f, alpha = %f, beta = %f\n",phi,d1,d2,d3,alpha,beta);
+    }
+
+  return myFOVCorrection;
+}
+
+vector correctForFOV(vector point,FOVCorrection myFOVCorrection)
+{
+  return rotateX(rotateY(point,-myFOVCorrection.alpha),myFOVCorrection.beta);
+}
+
+/* --------------------------------------------------
    Calcules the spin direction for a set of images and two points.
    This approach uses the two point approach.  Given two points
    observed in two images, the spin and spin axis can be calculated.
@@ -169,6 +240,10 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   sphericalCoordinate time1Normal_spherical;
   sphericalCoordinate time2Normal_spherical;
 
+  // FOV corrections for time 1 and time 2
+  FOVCorrection FOVCorrectionForTime1;
+  FOVCorrection FOVCorrectionForTime2;
+
   // Defines the midpoint on the arc connecting a point at time #1 and time #2.
   // Normalized to unity and centered at the origin.
   vector point1MidPoint;
@@ -199,6 +274,9 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   vector point2Time1Prime;
   vector point2Time2Prime;
 
+  // Cross product of the projected point 1's
+  vector projectedCrossProduct;
+
   // Amount of spin calculated between the two times
   double spinMagInDegrees;
   double spinMagInDegrees_point2;
@@ -216,6 +294,8 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
 
   // Output arguement.  See header file.
   spinDescription mySpinDescription;
+
+  double myArg;
   
   // Normalized all 4 points (2 points, 2 times) to the origin and unity.
   point1Time1   = vectorSubtract(point1Time1,ballCenterTime1);
@@ -243,6 +323,33 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
       printf("p2t2 x=%f, y=%f, z=%f\n",point2Time2.x,point2Time2.y,point2Time2.z);
     }
 
+if (LIB_SPINMODELING_FOVCORRECTION)
+    {
+      FOVCorrectionForTime1 = calcFOVCorrection(ballCenterTime1,LIB_SPINMODELING_FIELDOFVIEW_FIRST_IMAGE,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT);
+      FOVCorrectionForTime2 = calcFOVCorrection(ballCenterTime2,LIB_SPINMODELING_FIELDOFVIEW_SECOND_IMAGE,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT);
+
+      if (LIB_SPINMODELING_DEBUG)
+	{
+	  printf("alpha t1 = %f, beta t1 = %f, alpha t2 = %f, beta t2 = %f\n",FOVCorrectionForTime1.alpha,FOVCorrectionForTime1.beta,FOVCorrectionForTime2.alpha,FOVCorrectionForTime2.beta);
+	}
+
+      point1Time1 = correctForFOV(point1Time1,FOVCorrectionForTime1);
+      point2Time1 = correctForFOV(point2Time1,FOVCorrectionForTime1);
+
+      point1Time2 = correctForFOV(point1Time2,FOVCorrectionForTime2);
+      point2Time2 = correctForFOV(point2Time2,FOVCorrectionForTime2);
+    }
+
+  if (LIB_SPINMODELING_DEBUG)
+    {
+      printf("p1t1 x=%f, y=%f, z=%f\n",point1Time1.x,point1Time1.y,point1Time1.z);
+      printf("p1t2 x=%f, y=%f, z=%f\n",point1Time2.x,point1Time2.y,point1Time2.z);
+      printf("p2t1 x=%f, y=%f, z=%f\n",point2Time1.x,point2Time1.y,point2Time1.z);
+      printf("p2t2 x=%f, y=%f, z=%f\n",point2Time2.x,point2Time2.y,point2Time2.z);
+    }
+
+
+
   // We'll normalize the arcs (defined by point 1 and point 2 at time 1, . . .) to a default arc length
   
   if (LIB_SPINMODELING_NORMALIZEARC)
@@ -267,6 +374,14 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
       point2Time1 = rotateZ(rotateY(rotateZ(rotateY(rotateZ(time1Midpoint,-time1Normal_spherical.theta),-time1Normal_spherical.phi),LIB_SPINMODELING_ARCLENGTHINDEGREES/2.0*M_PI/180.0),time1Normal_spherical.phi),time1Normal_spherical.theta);
       point1Time2 = rotateZ(rotateY(rotateZ(rotateY(rotateZ(time2Midpoint,-time2Normal_spherical.theta),-time2Normal_spherical.phi),-LIB_SPINMODELING_ARCLENGTHINDEGREES/2.0*M_PI/180.0),time2Normal_spherical.phi),time2Normal_spherical.theta);
       point2Time2 = rotateZ(rotateY(rotateZ(rotateY(rotateZ(time2Midpoint,-time2Normal_spherical.theta),-time2Normal_spherical.phi),LIB_SPINMODELING_ARCLENGTHINDEGREES/2.0*M_PI/180.0),time2Normal_spherical.phi),time2Normal_spherical.theta);
+    }
+
+  if (LIB_SPINMODELING_DEBUG)
+    {
+      printf("p1t1 x=%f, y=%f, z=%f\n",point1Time1.x,point1Time1.y,point1Time1.z);
+      printf("p1t2 x=%f, y=%f, z=%f\n",point1Time2.x,point1Time2.y,point1Time2.z);
+      printf("p2t1 x=%f, y=%f, z=%f\n",point2Time1.x,point2Time1.y,point2Time1.z);
+      printf("p2t2 x=%f, y=%f, z=%f\n",point2Time2.x,point2Time2.y,point2Time2.z);
     }
 
   // Calculate the midpoint of the arc for a point #1 between 2 times.
@@ -307,23 +422,76 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
       printf("GC2 = [%f,%f,%f]\n",point2GC.x,point2GC.y,point2GC.z);
     }
 
-  // The interesction of the two great circles above defines the spin axis.
-  // See document "Intersection of Great Circles on a Sphere"
-  // The next few lines are used to calculate the intersection, i.e. spin axis.
-  h = (point2GC.x*point1GC.z - point2GC.z*point1GC.x) / (point2GC.y*point1GC.x - point2GC.x*point1GC.y);
-  g = (-h*point1GC.y-point1GC.z) / point1GC.x;
-  k = sqrt(1/(g*g + h*h + 1));
-
-  if (LIB_SPINMODELING_DEBUG)
+  if (0)
+    { /*   Old way of doing it   */
+      // The interesction of the two great circles above defines the spin axis.
+      // See document "Intersection of Great Circles on a Sphere"
+      // The next few lines are used to calculate the intersection, i.e. spin axis.
+      h = (point2GC.x*point1GC.z - point2GC.z*point1GC.x) / (point2GC.y*point1GC.x - point2GC.x*point1GC.y);
+      g = (-h*point1GC.y-point1GC.z) / point1GC.x;
+      k = sqrt(1/(g*g + h*h + 1));
+      
+      if (LIB_SPINMODELING_DEBUG)
+	{
+	  printf("h=%f,g=%f,k=%f\n",h,g,k);
+	}  
+      
+      // Define spin axis
+      spinAxis.x = g*k;
+      spinAxis.y = h*k;
+      spinAxis.z = k;
+    }
+  else /* We can just do cross products! */
     {
-      printf("h=%f,g=%f,k=%f\n",h,g,k);
-    }  
-
-  // Define spin axis
-  spinAxis.x = g*k;
-  spinAxis.y = h*k;
-  spinAxis.z = k;
-
+      if ( (vectorMag(point1GC)==0) & (vectorMag(point2GC)!=0) )
+	{
+	  if (LIB_SPINMODELING_DEBUG)
+	    {
+	      printf("Spin axis is @ point 1!\n");
+	    }
+	  spinAxis = point1Time1;
+	}
+      else if ( (vectorMag(point1GC)!=0) & (vectorMag(point2GC)==0) )
+	{
+	  if (LIB_SPINMODELING_DEBUG)
+	    {
+	      printf("Spin axis is @ point 2!\n");
+	    }
+	  spinAxis = point2Time1;
+	}
+      else if ( (vectorMag(point1GC)==0) & (vectorMag(point2GC)==0) )
+	{
+	  if (LIB_SPINMODELING_DEBUG)
+	    {
+	      printf("0 degrees spin!  Setting spin axis to 0,0,1\n");
+	    }
+	  spinAxis.x=0;
+	  spinAxis.y=0;
+	  spinAxis.z=1;
+	}
+      else
+	{
+	  spinAxis = vectorCrossProduct(point1GC,point2GC);
+	  if (LIB_SPINMODELING_DEBUG)
+	    {
+	      printf("Mag of cross product = %e\n",vectorMag(spinAxis));
+	    }
+	  if (vectorMag(spinAxis) < 1e-14) // Numerically a problem.  Need to really find the intersection of the labels
+	    {
+	      spinAxis.x = 0;
+	      spinAxis.y = 0;
+	      spinAxis.z = 1;
+	    }
+	  spinAxis = vectorScalarDivide(spinAxis,vectorMag(spinAxis));
+	  if (spinAxis.z < 0)
+	    {
+	      spinAxis.x=-spinAxis.x;
+	      spinAxis.y=-spinAxis.y;
+	      spinAxis.z=-spinAxis.z;
+	    }
+	}
+    }
+  
   // Calculate spherical coordiantes.
   spinAxisSpherical = vectorToSpherical(spinAxis);
 
@@ -347,11 +515,35 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
     }  
 
   // Spin is calculate using a dot product and convert to degrees.
-  spinMagInDegrees = 180/M_PI*acos(vectorDotProduct(point1Time1Prime,point1Time2Prime)/vectorMag(point1Time1Prime)/vectorMag(point1Time2Prime));
-  spinMagInDegrees_point2 = 180/M_PI*acos(vectorDotProduct(point2Time1Prime,point2Time2Prime)/vectorMag(point2Time1Prime)/vectorMag(point2Time2Prime));
+  myArg = vectorDotProduct(point1Time1Prime,point1Time2Prime)/vectorMag(point1Time1Prime)/vectorMag(point1Time2Prime);
+  if (myArg > 1) // We check here because there can be some numerical errors that cause the argument to be > 1 (stationary images)
+    {
+      myArg = 1;
+    }  
+  spinMagInDegrees = 180/M_PI*acos(myArg);
+  myArg = vectorDotProduct(point2Time1Prime,point2Time2Prime)/vectorMag(point2Time1Prime)/vectorMag(point2Time2Prime);
+  if (myArg > 1)
+    {
+      myArg = 1;
+    }
+  spinMagInDegrees_point2 = 180/M_PI*acos(myArg);
   if (LIB_SPINMODELING_DEBUG)
     {
       printf("Spin angles of %f and %f found!\n",spinMagInDegrees, spinMagInDegrees_point2);
+    }
+  
+  // It is possible that the spin was actually between 180 and 360 degrees, since the arcos doesn't know.
+  // We'll define that we care about a right hand rotation from the first point @ time 1.
+  // So if the cross product results in a negative z, then it's > 180 degrees!
+  projectedCrossProduct = vectorCrossProduct(point1Time1Prime,point1Time2Prime);
+  if (projectedCrossProduct.z < 0)
+    {
+      spinMagInDegrees = 360.0 - spinMagInDegrees;
+      spinMagInDegrees_point2 = 360.0 - spinMagInDegrees_point2;
+      if (LIB_SPINMODELING_DEBUG)
+	{
+	  printf("Spin is actually >180 degrees @ %f\n",spinMagInDegrees);
+	}
     }
 
   // Spin axis defined as the "pitch" angle (angle between spin axis and YZ plane)

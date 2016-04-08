@@ -1,4 +1,4 @@
-/*                 Version 2.2.1                 */
+/*                 Version 2.3.2                 */
 #include <stdio.h>
 #include "SpinModeling.h"
 
@@ -28,8 +28,12 @@ int main()
   // 3 - Sample #3, Khan Adjusted test case
   // 12 - Sample #12, Wil data
   // 16 - Sample #16, Wil data
+  // -1 - 0 spin
+  // -2 - 
+  // -3 - 
+  // -4 - 
 
-  testNum = 16;
+  testNum = 3;
 
   if (testNum == 3)
     {
@@ -169,6 +173,122 @@ else if (testNum == 16)
       point2Time2.y = 291.0;
       point2Time2.z = 0.0;
     }
+else if (testNum == -1)
+    {
+      ballCenterTime1.x = 100.0;
+      ballCenterTime1.y = 100.0;
+      ballCenterTime1.z = 0.0;
+      
+      ballCenterTime2.x = 100.0;
+      ballCenterTime2.y = 100.0;
+      ballCenterTime2.z = 0.0;
+
+      ballRadiusTime1 = 100.0 / 2;
+      ballRadiusTime2 = 100.0 / 2;
+
+      point1Time1.x = 95.0;
+      point1Time1.y = 100.0;
+      point1Time1.z = 0.0;
+      
+      point2Time1.x = 105.0;
+      point2Time1.y = 100.0;
+      point2Time1.z = 0.0;
+      
+      point1Time2.x = 95.0;
+      point1Time2.y = 100.0;
+      point1Time2.z = 0.0;
+      
+      point2Time2.x = 105.0;
+      point2Time2.y = 100.0;
+      point2Time2.z = 0.0;
+    }
+ else if (testNum == -2)
+    {
+      ballCenterTime1.x = 100.0;
+      ballCenterTime1.y = 100.0;
+      ballCenterTime1.z = 0.0;
+      
+      ballCenterTime2.x = 100.0;
+      ballCenterTime2.y = 100.0;
+      ballCenterTime2.z = 0.0;
+
+      ballRadiusTime1 = 100.0 / 2;
+      ballRadiusTime2 = 100.0 / 2;
+
+      point1Time1.x = 95.0;
+      point1Time1.y = 100.0;
+      point1Time1.z = 0.0;
+      
+      point2Time1.x = 105.0;
+      point2Time1.y = 100.0;
+      point2Time1.z = 0.0;
+      
+      point1Time2.x = 100.0;
+      point1Time2.y = 95.0;
+      point1Time2.z = 0.0;
+      
+      point2Time2.x = 100.0;
+      point2Time2.y = 105.0;
+      point2Time2.z = 0.0;
+    }
+else if (testNum == -3)
+    {
+      ballCenterTime1.x = 100.0;
+      ballCenterTime1.y = 100.0;
+      ballCenterTime1.z = 0.0;
+      
+      ballCenterTime2.x = 100.0;
+      ballCenterTime2.y = 100.0;
+      ballCenterTime2.z = 0.0;
+
+      ballRadiusTime1 = 100.0 / 2;
+      ballRadiusTime2 = 100.0 / 2;
+
+      point1Time1.x = 95.0;
+      point1Time1.y = 100.0;
+      point1Time1.z = 0.0;
+      
+      point2Time1.x = 105.0;
+      point2Time1.y = 100.0;
+      point2Time1.z = 0.0;
+      
+      point1Time2.x = 105.0;
+      point1Time2.y = 100.0;
+      point1Time2.z = 0.0;
+      
+      point2Time2.x = 95.0;
+      point2Time2.y = 100.0;
+      point2Time2.z = 0.0;
+    }
+else if (testNum == -4)
+    {
+      ballCenterTime1.x = 100.0;
+      ballCenterTime1.y = 100.0;
+      ballCenterTime1.z = 0.0;
+      
+      ballCenterTime2.x = 100.0;
+      ballCenterTime2.y = 100.0;
+      ballCenterTime2.z = 0.0;
+
+      ballRadiusTime1 = 100.0 / 2;
+      ballRadiusTime2 = 100.0 / 2;
+
+      point1Time1.x = 95.0;
+      point1Time1.y = 100.0;
+      point1Time1.z = 0.0;
+      
+      point2Time1.x = 105.0;
+      point2Time1.y = 100.0;
+      point2Time1.z = 0.0;
+      
+      point1Time2.x = 100.0;
+      point1Time2.y = 105.0;
+      point1Time2.z = 0.0;
+      
+      point2Time2.x = 100.0;
+      point2Time2.y = 95.0;
+      point2Time2.z = 0.0;
+    }
   
   deltaTimeInSeconds = 0.001;
 
@@ -182,15 +302,31 @@ else if (testNum == 16)
 
   if (testNum == 3)
     {
-      printf("I have a spin of 123.418840 degrees about a spin axis of -6.964909 degrees:  20569.806726 RPMs\n");
+      printf("I have a spin of 121.602557 degrees about a spin axis of -1.211893 degrees:  20267.092783 RPMs\n");
     }
   else if (testNum == 12)
     {
-      printf("I have a spin of 97.846613 degrees about a spin axis of -13.228672 degrees:  16307.768768 RPMs\n");
+      printf("I have a spin of 93.110362 degrees about a spin axis of -6.575197 degrees:  15518.393731 RPMs\n");
     }
-  else if(testNum = 16)
+  else if(testNum == 16)
     {
-      printf("I have a spin of 82.391591 degrees about a spin axis of 4.861891 degrees:  13731.931900 RPMs\n");
+      printf("I have a spin of 86.303097 degrees about a spin axis of 16.816952 degrees:  14383.849520 RPMs\n");
+    }
+  else if(testNum == -1)
+    {
+      printf("I have a spin of 0.000000 degrees about a spin axis of -0.000000 degrees:  0.000000 RPMs\n");
+    }
+  else if(testNum == -2)
+    {
+      printf("I have a spin of 237.725058 degrees about a spin axis of -0.000000 degrees:  39620.843060 RPMs\n");
+    }
+  else if(testNum == -3)
+    {
+      printf("I have a spin of 279.836844 degrees about a spin axis of -0.000000 degrees:  46639.473948 RPMs\n");
+    }
+  else if(testNum == -4)
+   {
+     printf("I have a spin of 325.250682 degrees about a spin axis of -0.000000 degrees:  54208.447026 RPMs\n");
     }
   printf("Finished program!\n"); 
 

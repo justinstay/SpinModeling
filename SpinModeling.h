@@ -1,12 +1,20 @@
-/*                 Version 2.2.1                 */
+/*                 Version 2.3.2                 */
 #ifndef LIB_SPINMODELING
 #define LIB_SPINMODELING
-/* ------------------ #Define Statments ------------------------- */
+/* ------------------ #Define Statements ------------------------- */
+/* Booleans */
 #define LIB_SPINMODELING_DEBUG 0
 #define LIB_SPINMODELING_NORMALIZEARC 1
+#define LIB_SPINMODELING_FOVCORRECTION 1
+/* Values */
 #define LIB_SPINMODELING_ARCLENGTHINDEGREES 40.0
 #define LIB_SPINMODELING_RIGHTHANDED 1
 #define LIB_SPINMODELING_LEFTHANDED -1
+#define LIB_SPINMODELING_FIELDOFVIEW_FIRST_IMAGE 60
+#define LIB_SPINMODELING_FIELDOFVIEW_SECOND_IMAGE 60
+#define LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH 752
+#define LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT 480
+
 /* ------------------ #Define Statments ------------------------- */
 
 /* ------------------ #Include Statments ------------------------ */
@@ -37,6 +45,12 @@ typedef struct
   double spinInRPMs;
 } spinDescription;
 
+typedef struct
+{
+  double alpha;
+  double beta;
+} FOVCorrection;
+
 double vectorMag(vector A);
 double vectorDotProduct(vector A, vector B);
 vector vectorCrossProduct(vector A, vector B);
@@ -48,6 +62,8 @@ vector rotateX(vector A,double theta);
 vector rotateY(vector A,double theta);
 vector rotateZ(vector A,double theta);
 vector projectXY(vector A);
+FOVCorrection calcFOVCorrection(vector ballCenter,double FOVInDegrees,int imageWidth,int imageHeight);
+vector correctForFOV(vector point,FOVCorrection myFOVCorrection);
 spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vector ballCenterTime1, double ballRadiusTime1, vector point1Time2, vector point2Time2, vector ballCenterTime2, double ballRadiusTime2, double deltaTimeInSeconds, int handedness);
 
 #endif
