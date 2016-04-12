@@ -338,11 +338,11 @@ int main()
 
       if (testNum == 3)
 	{
-	  printf("I have a spin of 120.130697 degrees about a spin axis of -2.460519 degrees:  20021.782851 RPMs\n");
+	  printf("I have a spin of 120.216545 degrees about a spin axis of -1.203005 degrees:  20036.090907 RPMs\n");
 	}
       else if (testNum == 12)
 	{
-	  printf("I have a spin of 90.466340 degrees about a spin axis of -8.417556 degrees:  15077.723323 RPMs\n");
+	  printf("I have a spin of 90.166135 degrees about a spin axis of -6.849810 degrees:  15027.689116 RPMs\n");
 	}
       else if(testNum == 16)
 	{
@@ -354,15 +354,15 @@ int main()
 	}
       else if(testNum == -2)
 	{
-	  printf("I have a spin of 81.979087 degrees about a spin axis of -9.783373 degrees:  13663.181165 RPMs\n");
+	  printf("I have a spin of 81.979087 degrees about a spin axis of -11.108771 degrees:  13663.181165 RPMs\n");
 	}
       else if(testNum == -3)
 	{
-	  printf("I have a spin of 292.478370 degrees about a spin axis of -0.000000 degrees:  48746.394953 RPMs\n");
+	  printf("I have a spin of 310.193572 degrees about a spin axis of -0.000000 degrees:  51698.928664 RPMs\n");
 	}
       else if(testNum == -4)
 	{
-	  printf("I have a spin of 261.979084 degrees about a spin axis of -9.766938 degrees:  43663.180684 RPMs\n");
+	  printf("I have a spin of 261.979084 degrees about a spin axis of -11.092548 degrees:  43663.180684 RPMs\n");
 	}
       printf("-----------------------------------------------------------------------\n");
     }

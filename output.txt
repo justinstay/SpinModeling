@@ -1,16 +1,16 @@
 Starting program . . . 
 Modeled with the following:
-FOV Image #1 = 60.000000
-FOV Image #2 = 60.000000
+FOV Image #1 = 70.000000
+FOV Image #2 = 70.000000
 Distortion Correction Image #1 = 9.000000e-07
 Distortion Correction Image #2 = 9.000000e-07
-I have a spin of 120.130697 degrees about a spin axis of -2.460519 degrees:  20021.782851 RPMs
+I have a spin of 120.216545 degrees about a spin axis of -1.203005 degrees:  20036.090907 RPMs
 Should say
-I have a spin of 120.130697 degrees about a spin axis of -2.460519 degrees:  20021.782851 RPMs
+I have a spin of 120.216545 degrees about a spin axis of -1.203005 degrees:  20036.090907 RPMs
 -----------------------------------------------------------------------
-I have a spin of 90.466340 degrees about a spin axis of -8.417556 degrees:  15077.723323 RPMs
+I have a spin of 90.166135 degrees about a spin axis of -6.849810 degrees:  15027.689116 RPMs
 Should say
-I have a spin of 90.466340 degrees about a spin axis of -8.417556 degrees:  15077.723323 RPMs
+I have a spin of 90.166135 degrees about a spin axis of -6.849810 degrees:  15027.689116 RPMs
 -----------------------------------------------------------------------
 I have a spin of nan degrees about a spin axis of nan degrees:  nan RPMs
 Should say
@@ -20,16 +20,16 @@ I have a spin of 0.000000 degrees about a spin axis of -0.000000 degrees:  0.000
 Should say
 I have a spin of 0.000000 degrees about a spin axis of -0.000000 degrees:  0.000000 RPMs
 -----------------------------------------------------------------------
-I have a spin of 81.979087 degrees about a spin axis of -9.783373 degrees:  13663.181165 RPMs
+I have a spin of 81.979087 degrees about a spin axis of -11.108771 degrees:  13663.181165 RPMs
 Should say
-I have a spin of 81.979087 degrees about a spin axis of -9.783373 degrees:  13663.181165 RPMs
+I have a spin of 81.979087 degrees about a spin axis of -11.108771 degrees:  13663.181165 RPMs
 -----------------------------------------------------------------------
-I have a spin of 292.478370 degrees about a spin axis of -0.000000 degrees:  48746.394953 RPMs
+I have a spin of 310.193572 degrees about a spin axis of -0.000000 degrees:  51698.928664 RPMs
 Should say
-I have a spin of 292.478370 degrees about a spin axis of -0.000000 degrees:  48746.394953 RPMs
+I have a spin of 310.193572 degrees about a spin axis of -0.000000 degrees:  51698.928664 RPMs
 -----------------------------------------------------------------------
-I have a spin of 261.979084 degrees about a spin axis of -9.766938 degrees:  43663.180684 RPMs
+I have a spin of 261.979084 degrees about a spin axis of -11.092548 degrees:  43663.180684 RPMs
 Should say
-I have a spin of 261.979084 degrees about a spin axis of -9.766938 degrees:  43663.180684 RPMs
+I have a spin of 261.979084 degrees about a spin axis of -11.092548 degrees:  43663.180684 RPMs
 -----------------------------------------------------------------------
 Finished program!
