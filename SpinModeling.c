@@ -1,4 +1,4 @@
-/*                 Version 2.3.2                 */
+/*                 Version 2.3.3                 */
 #include "SpinModeling.h"
 
 // --------------------------------------------------//
@@ -197,6 +197,52 @@ vector correctForFOV(vector point,FOVCorrection myFOVCorrection)
 }
 
 /* --------------------------------------------------
+   Corrects for barrel distortion using a simple model.
+   See http://stackoverflow.com/questions/6199636/formulas-for-barrel-pincushion-distortion
+
+   There are more complicated ones but this one is simple and seem to does well in matlab.
+   Could very easily incorporate a more complicated method in this funcion.
+
+   Input Arguments
+   
+   point           - a point in the image in pixels (1,1) is lower left hand of image
+   imageWidth      - width of image in pixels
+   imageHeight     - height of image in pixels
+   distortionAlpha - parameter used to define the amount of distortion in the image
+
+   Output Arguments
+
+   newPoint        - transformed point in pixels
+-------------------------------------------------- */
+
+vector correctForBarrelDistortion(vector point,int imageWidth, int imageHeight, double distortionAlpha)
+{
+  // Center of the image
+  vector centerOfImage;
+  // Radial distance to the center of the image from the point
+  double distanceFromCenter;
+  // Scale factor from transform
+  double gamma;
+  // Transformed point
+  vector newPoint;
+
+  centerOfImage.x = ((double) imageWidth + 1)/2;
+  centerOfImage.y = ((double) imageHeight +1)/2;
+  centerOfImage.z = 0;
+
+  distanceFromCenter = vectorMag(vectorSubtract(point,centerOfImage));
+
+  gamma = 1 / (1 - distortionAlpha * distanceFromCenter*distanceFromCenter);
+
+  newPoint.x = gamma*(point.x-centerOfImage.x)+centerOfImage.x;
+  newPoint.y = gamma*(point.y-centerOfImage.y)+centerOfImage.y;
+  newPoint.z = gamma*(point.z-centerOfImage.z)+centerOfImage.z;
+
+ return newPoint;
+}
+
+
+/* --------------------------------------------------
    Calcules the spin direction for a set of images and two points.
    This approach uses the two point approach.  Given two points
    observed in two images, the spin and spin axis can be calculated.
@@ -296,6 +342,50 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   spinDescription mySpinDescription;
 
   double myArg;
+
+  // Some temp point holder to calc the new radius after distortion correction
+  vector newBallTop;
+  vector newBallBottom;
+  vector yVector;
+
+  if (LIB_SPINMODELING_BARREL_DISTORTION_CORRECTION)
+    {
+      point1Time1 = correctForBarrelDistortion(point1Time1,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_FIRST_IMAGE);
+      point2Time1 = correctForBarrelDistortion(point2Time1,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_FIRST_IMAGE);
+      yVector.x = 0;
+      yVector.y = ballRadiusTime1;
+      yVector.z = 0;
+      newBallTop = correctForBarrelDistortion(vectorAdd(ballCenterTime1,yVector),LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_FIRST_IMAGE);
+      newBallBottom = correctForBarrelDistortion(vectorSubtract(ballCenterTime1,yVector),LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_FIRST_IMAGE);
+      ballRadiusTime1 = fabs(newBallTop.y-newBallBottom.y)/2.0;
+      ballCenterTime1 = correctForBarrelDistortion(ballCenterTime1,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_FIRST_IMAGE);
+      
+      point1Time2 = correctForBarrelDistortion(point1Time2,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_SECOND_IMAGE);
+      point2Time2 = correctForBarrelDistortion(point2Time2,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_SECOND_IMAGE);
+      yVector.x = 0;
+      yVector.y = ballRadiusTime2;
+      yVector.z = 0;
+      newBallTop = correctForBarrelDistortion(vectorAdd(ballCenterTime2,yVector),LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_SECOND_IMAGE);
+      newBallBottom = correctForBarrelDistortion(vectorSubtract(ballCenterTime2,yVector),LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_SECOND_IMAGE);
+      ballRadiusTime2 = fabs(newBallTop.y-newBallBottom.y)/2.0;
+      ballCenterTime2 = correctForBarrelDistortion(ballCenterTime2,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_SECOND_IMAGE);
+      
+      if (LIB_SPINMODELING_DEBUG)
+	{
+	  printf("Distortion corrected vectors\n");
+	  printf("p1t1 x=%f, y=%f, z=%f\n",point1Time1.x,point1Time1.y,point1Time1.z);
+	  printf("p1t2 x=%f, y=%f, z=%f\n",point1Time2.x,point1Time2.y,point1Time2.z);
+	  printf("p2t1 x=%f, y=%f, z=%f\n",point2Time1.x,point2Time1.y,point2Time1.z);
+	  printf("p2t2 x=%f, y=%f, z=%f\n",point2Time2.x,point2Time2.y,point2Time2.z);
+	  printf("centert1 x=%f, y=%f, z=%f\n",ballCenterTime1.x,ballCenterTime1.y,ballCenterTime1.z);
+	  printf("centert2 x=%f, y=%f, z=%f\n",ballCenterTime2.x,ballCenterTime2.y,ballCenterTime2.z);
+	  printf("radiust1 = %f\n",ballRadiusTime1);
+	  printf("radiust2 = %f\n",ballRadiusTime2);
+
+ 
+	}
+    }
+
   
   // Normalized all 4 points (2 points, 2 times) to the origin and unity.
   point1Time1   = vectorSubtract(point1Time1,ballCenterTime1);
