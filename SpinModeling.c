@@ -1,4 +1,4 @@
-/*                 Version 2.3.3                 */
+/*                 Version 2.3.4                 */
 #include "SpinModeling.h"
 
 // --------------------------------------------------//
@@ -344,31 +344,49 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   double myArg;
 
   // Some temp point holder to calc the new radius after distortion correction
-  vector newBallTop;
-  vector newBallBottom;
-  vector yVector;
+  vector radialVector;
+  vector radialPoint;
+  double maxRadius;
+  vector correctedCenter;
+  int k1;
 
   if (LIB_SPINMODELING_BARREL_DISTORTION_CORRECTION)
     {
       point1Time1 = correctForBarrelDistortion(point1Time1,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_FIRST_IMAGE);
       point2Time1 = correctForBarrelDistortion(point2Time1,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_FIRST_IMAGE);
-      yVector.x = 0;
-      yVector.y = ballRadiusTime1;
-      yVector.z = 0;
-      newBallTop = correctForBarrelDistortion(vectorAdd(ballCenterTime1,yVector),LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_FIRST_IMAGE);
-      newBallBottom = correctForBarrelDistortion(vectorSubtract(ballCenterTime1,yVector),LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_FIRST_IMAGE);
-      ballRadiusTime1 = fabs(newBallTop.y-newBallBottom.y)/2.0;
-      ballCenterTime1 = correctForBarrelDistortion(ballCenterTime1,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_FIRST_IMAGE);
-      
+      correctedCenter = correctForBarrelDistortion(ballCenterTime1,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_FIRST_IMAGE);      
+      maxRadius = 0;
+      for (k1=1;k1<=100;k1++)
+	{
+	  radialVector.x = ballRadiusTime1*cos(k1/100.0*2.0*M_PI);
+	  radialVector.y = ballRadiusTime1*sin(k1/100.0*2.0*M_PI);
+	  radialVector.z = 0;
+	  radialPoint = vectorAdd(ballCenterTime1,radialVector);
+	  radialPoint = correctForBarrelDistortion(radialPoint,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_FIRST_IMAGE);
+	  radialPoint = vectorSubtract(radialPoint,correctedCenter);
+	  //printf("My diameter is %f\n",vectorMag(radialPoint));
+	  maxRadius = fmax(maxRadius,vectorMag(radialPoint));
+	}      
+      ballRadiusTime1 = maxRadius;
+      ballCenterTime1 = correctedCenter;
+      /*   For time 2 */
       point1Time2 = correctForBarrelDistortion(point1Time2,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_SECOND_IMAGE);
       point2Time2 = correctForBarrelDistortion(point2Time2,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_SECOND_IMAGE);
-      yVector.x = 0;
-      yVector.y = ballRadiusTime2;
-      yVector.z = 0;
-      newBallTop = correctForBarrelDistortion(vectorAdd(ballCenterTime2,yVector),LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_SECOND_IMAGE);
-      newBallBottom = correctForBarrelDistortion(vectorSubtract(ballCenterTime2,yVector),LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_SECOND_IMAGE);
-      ballRadiusTime2 = fabs(newBallTop.y-newBallBottom.y)/2.0;
-      ballCenterTime2 = correctForBarrelDistortion(ballCenterTime2,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_SECOND_IMAGE);
+      correctedCenter = correctForBarrelDistortion(ballCenterTime2,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_SECOND_IMAGE);            
+      maxRadius = 0;
+      for (k1=1;k1<=100;k1++)
+	{
+	  radialVector.x = ballRadiusTime2*cos(k1/100.0*2.0*M_PI);
+	  radialVector.y = ballRadiusTime2*sin(k1/100.0*2.0*M_PI);
+	  radialVector.z = 0;
+	  radialPoint = vectorAdd(ballCenterTime2,radialVector);
+	  radialPoint = correctForBarrelDistortion(radialPoint,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT,LIB_SPINMODELING_BARREL_DISTORTION_ALPHA_SECOND_IMAGE);
+	  radialPoint = vectorSubtract(radialPoint,correctedCenter);
+	  //printf("My diameter is %f\n",vectorMag(radialPoint));
+	  maxRadius = fmax(maxRadius,vectorMag(radialPoint));
+	}            
+      ballRadiusTime2 = maxRadius;
+      ballCenterTime2 = correctedCenter;
       
       if (LIB_SPINMODELING_DEBUG)
 	{

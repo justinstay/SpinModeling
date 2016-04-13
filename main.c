@@ -1,4 +1,4 @@
-/*                 Version 2.3.3                 */
+/*                 Version 2.3.4                */
 #include <stdio.h>
 #include "SpinModeling.h"
 
@@ -338,15 +338,15 @@ int main()
 
       if (testNum == 3)
 	{
-	  printf("I have a spin of 120.216545 degrees about a spin axis of -1.203005 degrees:  20036.090907 RPMs\n");
+	  printf("I have a spin of 120.690604 degrees about a spin axis of 1.709976 degrees:  20115.100614 RPMs\n");
 	}
       else if (testNum == 12)
 	{
-	  printf("I have a spin of 90.166135 degrees about a spin axis of -6.849810 degrees:  15027.689116 RPMs\n");
+	  printf("I have a spin of 90.315271 degrees about a spin axis of -3.731641 degrees:  15052.545187 RPMs\n");
 	}
       else if(testNum == 16)
 	{
-	  printf("I have a spin of nan degrees about a spin axis of nan degrees:  nan RPMs\n");
+	  printf("I have a spin of 89.116131 degrees about a spin axis of 19.689220 degrees:  14852.688460 RPMs\n");
 	}
       else if(testNum == -1)
 	{
@@ -354,15 +354,15 @@ int main()
 	}
       else if(testNum == -2)
 	{
-	  printf("I have a spin of 81.979087 degrees about a spin axis of -11.108771 degrees:  13663.181165 RPMs\n");
+	  printf("I have a spin of 81.979088 degrees about a spin axis of -11.108364 degrees:  13663.181270 RPMs\n");
 	}
       else if(testNum == -3)
 	{
-	  printf("I have a spin of 310.193572 degrees about a spin axis of -0.000000 degrees:  51698.928664 RPMs\n");
+	  printf("I have a spin of 310.208646 degrees about a spin axis of -0.000000 degrees:  51701.440990 RPMs\n");
 	}
       else if(testNum == -4)
 	{
-	  printf("I have a spin of 261.979084 degrees about a spin axis of -11.092548 degrees:  43663.180684 RPMs\n");
+	  printf("I have a spin of 261.979086 degrees about a spin axis of -11.094826 degrees:  43663.180935 RPMs\n");
 	}
       printf("-----------------------------------------------------------------------\n");
     }
