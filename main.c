@@ -27,6 +27,8 @@ int main()
 
   int testNum;
   int indx;
+
+  int handedness;
   
   // 3 - Sample #3, Khan Adjusted test case
   // 12 - Sample #12, Wil data
@@ -35,8 +37,9 @@ int main()
   // -2 - 
   // -3 - 
   // -4 - 
+  // -200 - Wil's Left handed example
 
-  int testNumArray[7] = {3,12,16,-1,-2,-3,-4};
+  int testNumArray[8] = {3,12,16,-1,-2,-3,-4,-200};
 
   for (indx = 0 ; indx < (int) (sizeof(testNumArray) / sizeof(int)) ; indx++)
     {
@@ -87,6 +90,8 @@ int main()
 	  point2Time2.x = 391.0;
 	  point2Time2.y = 290.0;
 	  point2Time2.z = 0.0;
+
+	  handedness = RIGHTHANDED;
 	}
       else if (testNum == 12)
 	{
@@ -133,6 +138,8 @@ int main()
 	  point2Time2.x = 405.0;
 	  point2Time2.y = 257.0;
 	  point2Time2.z = 0.0;
+
+	  handedness = RIGHTHANDED;
 	}
       else if (testNum == 16)
 	{
@@ -179,6 +186,9 @@ int main()
 	  point2Time2.x = 372.0;
 	  point2Time2.y = 291.0;
 	  point2Time2.z = 0.0;
+
+	  handedness = RIGHTHANDED;
+
 	}
       else if (testNum == -1)
 	{
@@ -208,6 +218,9 @@ int main()
 	  point2Time2.x = 105.0;
 	  point2Time2.y = 100.0;
 	  point2Time2.z = 0.0;
+
+	  handedness = RIGHTHANDED;
+
 	}
       else if (testNum == -2)
 	{
@@ -237,6 +250,9 @@ int main()
 	  point2Time2.x = 100.0;
 	  point2Time2.y = 105.0;
 	  point2Time2.z = 0.0;
+
+	  handedness = RIGHTHANDED;
+
 	}
       else if (testNum == -3)
 	{
@@ -266,6 +282,9 @@ int main()
 	  point2Time2.x = 95.0;
 	  point2Time2.y = 100.0;
 	  point2Time2.z = 0.0;
+
+	  handedness = RIGHTHANDED;
+
 	}
       else if (testNum == -4)
 	{
@@ -295,7 +314,43 @@ int main()
 	  point2Time2.x = 100.0;
 	  point2Time2.y = 95.0;
 	  point2Time2.z = 0.0;
+
+	  handedness = RIGHTHANDED;
+
 	}
+      else if (testNum == -200)
+	{
+	  ballCenterTime1.x = 694.0;
+	  ballCenterTime1.y = 115.0;
+	  ballCenterTime1.z = 0.0;
+      
+	  ballCenterTime2.x = 401.0;
+	  ballCenterTime2.y = 105.0;
+	  ballCenterTime2.z = 0.0;
+
+	  ballRadiusTime1 = 82.0 / 2;
+	  ballRadiusTime2 = 94.0 / 2;
+
+	  point1Time1.x = 699.0;
+	  point1Time1.y = 111.0;
+	  point1Time1.z = 0.0;
+      
+	  point2Time1.x = 725.0;
+	  point2Time1.y = 112.0;
+	  point2Time1.z = 0.0;
+      
+	  point1Time2.x = 408.0;
+	  point1Time2.y = 74.0;
+	  point1Time2.z = 0.0;
+      
+	  point2Time2.x = 407.0;
+	  point2Time2.y = 114.0;
+	  point2Time2.z = 0.0;
+
+	  handedness = LEFTHANDED;
+
+	}
+
       else
 	{
 	  ballCenterTime1.x = 0.0;
@@ -324,6 +379,9 @@ int main()
 	  point2Time2.x = 0.0;
 	  point2Time2.y = 0.0;
 	  point2Time2.z = 0.0;
+
+	  handedness = RIGHTHANDED;
+
 	}
   
       deltaTimeInSeconds = 0.001;
@@ -331,7 +389,7 @@ int main()
       // Pass in the parameters as described above.
       // A struct is returned with two paramters:  spinInDegrees and spinAxisInDegrees;
       // Both describe the amount of spin and spin axis between the two images.
-      mySpin = calcSpinAxisAndSpin(point1Time1, point2Time1, ballCenterTime1, ballRadiusTime1, point1Time2, point2Time2, ballCenterTime2, ballRadiusTime2,deltaTimeInSeconds,RIGHTHANDED);
+      mySpin = calcSpinAxisAndSpin(point1Time1, point2Time1, ballCenterTime1, ballRadiusTime1, point1Time2, point2Time2, ballCenterTime2, ballRadiusTime2,deltaTimeInSeconds,handedness);
 
       printf("I have a spin of %f degrees about a spin axis of %f degrees:  %f RPMs\n",mySpin.spinInDegrees,mySpin.spinAxisInDegrees,mySpin.spinInRPMs);
       printf("Should say\n");
@@ -363,6 +421,10 @@ int main()
       else if(testNum == -4)
 	{
 	  printf("I have a spin of 261.979086 degrees about a spin axis of -11.094826 degrees:  43663.180935 RPMs\n");
+	}
+      else if(testNum == -200)
+	{
+	  printf("I have a spin of 264.967327 degrees about a spin axis of 4.762188 degrees:  44161.221144 RPMs\n");
 	}
       printf("-----------------------------------------------------------------------\n");
     }

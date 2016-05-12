@@ -32,4 +32,8 @@ I have a spin of 261.979086 degrees about a spin axis of -11.094826 degrees:  43
 Should say
 I have a spin of 261.979086 degrees about a spin axis of -11.094826 degrees:  43663.180935 RPMs
 -----------------------------------------------------------------------
+I have a spin of 264.967327 degrees about a spin axis of 4.762188 degrees:  44161.221144 RPMs
+Should say
+I have a spin of 264.967327 degrees about a spin axis of 4.762188 degrees:  44161.221144 RPMs
+-----------------------------------------------------------------------
 Finished program!

@@ -682,7 +682,7 @@ if (LIB_SPINMODELING_FOVCORRECTION)
     }
   else
     {
-      mySpinDescription.spinInDegrees = -spinMagInDegrees;
+      mySpinDescription.spinInDegrees = 360.0 - spinMagInDegrees;
     }
 
   // Calculate RPMs
