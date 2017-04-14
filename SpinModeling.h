@@ -7,6 +7,7 @@
 #define LIB_SPINMODELING_NORMALIZEARC 1
 #define LIB_SPINMODELING_FOVCORRECTION 1
 #define LIB_SPINMODELING_BARREL_DISTORTION_CORRECTION 1
+#define LIB_SPINMODELING_MULTI_LOGO 1
 /* Values */
 #define LIB_SPINMODELING_ARCLENGTHINDEGREES 40.0
 #define LIB_SPINMODELING_RIGHTHANDED 1
@@ -72,9 +73,9 @@ typedef struct
  */
 typedef struct logoDescription
 {
-  double yaw;
-  double pitch;
-  double roll;
+  double yawInDegrees;
+  double pitchInDegrees;
+  double rollInDegrees;
 } logoDescription;
 
 /*
@@ -102,9 +103,11 @@ vector projectXY(vector A);
 FOVCorrection calcFOVCorrection(vector ballCenter,double FOVInDegrees,int imageWidth,int imageHeight);
 vector correctForFOV(vector point,FOVCorrection myFOVCorrection);
 vector correctForBarrelDistortion(vector point,int imageWidth, int imageHeight, double distortionAlpha);
-spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vector ballCenterTime1, double ballRadiusTime1, vector point1Time2, vector point2Time2, vector ballCenterTime2, double ballRadiusTime2, double deltaTimeInSeconds, int handedness);
+spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vector ballCenterTime1, double ballRadiusTime1, int time1LogoID, vector point1Time2, vector point2Time2, vector ballCenterTime2, double ballRadiusTime2, int time2LogoID, double deltaTimeInSeconds, int handedness, logoList * myLogoLIst);
 logoList * initLogoList();
-void addLogo(logoList * myLogoList, int logoID, double newRoll, double newPitch, double newYaw);
+void addLogo(logoList * myLogoList, int logoID, double newRollInDegrees, double newPitchInDegrees, double newYawInDegrees);
 void freeLogoList(logoList * myLogoList);
+logoDescription getLogoDescription(logoList * myLogoList, int logoID);
+vector rotateLogoPoint(vector myPoint,logoDescription time1LogoDescription,logoDescription time2LogoDescription);
 
 #endif

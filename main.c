@@ -30,6 +30,8 @@ int main()
 
   int handedness;
 
+  int time1LogoID;
+  int time2LogoID;
   logoList * myLogoList;
 
   /*
@@ -105,6 +107,8 @@ int main()
 	  point2Time2.z = 0.0;
 
 	  handedness = RIGHTHANDED;
+	  time1LogoID = 1;
+	  time2LogoID = 1;
 	}
       else if (testNum == 12)
 	{
@@ -153,6 +157,8 @@ int main()
 	  point2Time2.z = 0.0;
 
 	  handedness = RIGHTHANDED;
+	  time1LogoID = 1;
+	  time2LogoID = 1;
 	}
       else if (testNum == 16)
 	{
@@ -201,6 +207,8 @@ int main()
 	  point2Time2.z = 0.0;
 
 	  handedness = RIGHTHANDED;
+	  time1LogoID = 1;
+	  time2LogoID = 1;
 
 	}
       else if (testNum == -1)
@@ -233,6 +241,8 @@ int main()
 	  point2Time2.z = 0.0;
 
 	  handedness = RIGHTHANDED;
+	  time1LogoID = 1;
+	  time2LogoID = 1;
 
 	}
       else if (testNum == -2)
@@ -265,6 +275,8 @@ int main()
 	  point2Time2.z = 0.0;
 
 	  handedness = RIGHTHANDED;
+	  time1LogoID = 1;
+	  time2LogoID = 1;
 
 	}
       else if (testNum == -3)
@@ -297,6 +309,8 @@ int main()
 	  point2Time2.z = 0.0;
 
 	  handedness = RIGHTHANDED;
+	  time1LogoID = 1;
+	  time2LogoID = 1;
 
 	}
       else if (testNum == -4)
@@ -329,6 +343,8 @@ int main()
 	  point2Time2.z = 0.0;
 
 	  handedness = RIGHTHANDED;
+	  time1LogoID = 1;
+	  time2LogoID = 1;
 
 	}
       else if (testNum == -200)
@@ -361,6 +377,8 @@ int main()
 	  point2Time2.z = 0.0;
 
 	  handedness = LEFTHANDED;
+	  time1LogoID = 1;
+	  time2LogoID = 1;
 
 	}
 
@@ -394,6 +412,8 @@ int main()
 	  point2Time2.z = 0.0;
 
 	  handedness = RIGHTHANDED;
+	  time1LogoID = 1;
+	  time2LogoID = 1;
 
 	}
   
@@ -402,7 +422,7 @@ int main()
       // Pass in the parameters as described above.
       // A struct is returned with two paramters:  spinInDegrees and spinAxisInDegrees;
       // Both describe the amount of spin and spin axis between the two images.
-      mySpin = calcSpinAxisAndSpin(point1Time1, point2Time1, ballCenterTime1, ballRadiusTime1, point1Time2, point2Time2, ballCenterTime2, ballRadiusTime2,deltaTimeInSeconds,handedness);
+      mySpin = calcSpinAxisAndSpin(point1Time1, point2Time1, ballCenterTime1, ballRadiusTime1, time1LogoID, point1Time2, point2Time2, ballCenterTime2, ballRadiusTime2, time2LogoID, deltaTimeInSeconds, handedness, myLogoList);
 
       printf("I have a spin of %f degrees about a spin axis of %f degrees:  %f RPMs\n",mySpin.spinInDegrees,mySpin.spinAxisInDegrees,mySpin.spinInRPMs);
       printf("Should say\n");
@@ -443,7 +463,7 @@ int main()
     }
   
 freeLogoList(myLogoList);
-  
+
 printf("Finished program!\n"); 
 
   return 0;

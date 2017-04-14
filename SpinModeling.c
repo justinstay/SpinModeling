@@ -272,9 +272,9 @@ vector correctForBarrelDistortion(vector point,int imageWidth, int imageHeight, 
    spinDescription - return a spin description (spin, spin axis, etc.).  See header file for more details.
    -------------------------------------------------- */
 
-spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vector ballCenterTime1, double ballRadiusTime1,
-				    vector point1Time2, vector point2Time2, vector ballCenterTime2, double ballRadiusTime2,
-				    double deltaTimeInSeconds, int handedness)
+spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vector ballCenterTime1, double ballRadiusTime1, int time1LogoID,
+				    vector point1Time2, vector point2Time2, vector ballCenterTime2, double ballRadiusTime2, int time2LogoID,
+				    double deltaTimeInSeconds, int handedness, logoList * myLogoList)
 {
 
   // Defines the midpoint on the arc connection points 1 and time at time 1, and at time 1
@@ -350,6 +350,10 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   double maxRadius;
   vector correctedCenter;
   int k1;
+
+  // Logo descriptions for both times
+  logoDescription time1LogoDescription;
+  logoDescription time2LogoDescription;
 
   if (LIB_SPINMODELING_BARREL_DISTORTION_CORRECTION)
     {
@@ -500,10 +504,13 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
    *  in the same reference frame as the 1st.  Using the list of logo locations, we can caluclate
    *  what rotation is required.
    */
-
-
-
-
+    if (LIB_SPINMODELING_MULTI_LOGO)
+    {
+      time1LogoDescription = getLogoDescription(myLogoList, time1LogoID);
+      time2LogoDescription = getLogoDescription(myLogoList, time2LogoID);
+      point1Time2 = rotateLogoPoint(point1Time2,time1LogoDescription,time2LogoDescription);
+      point2Time2 = rotateLogoPoint(point2Time2,time1LogoDescription,time2LogoDescription);
+    }
 
   // Calculate the midpoint of the arc for a point #1 between 2 times.
   // Note, must normalize back to unity.
@@ -750,7 +757,7 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
 
    NONE
 -------------------------------------------------- */
- void addLogo(logoList * myLogoList, int newID, double newRoll, double newPitch, double newYaw)
+ void addLogo(logoList * myLogoList, int newID, double newRollInDegrees, double newPitchInDegrees, double newYawInDegrees)
  {
   /*
    *  Checks for an empty logo list (when thisLogo is NULL)
@@ -759,9 +766,9 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   {
     myLogoList->logoID = newID;
     myLogoList->thisLogo = (logoDescription *) malloc(sizeof(logoDescription));
-    myLogoList->thisLogo->roll = newRoll;
-    myLogoList->thisLogo->pitch = newPitch;
-    myLogoList->thisLogo->yaw = newYaw;
+    myLogoList->thisLogo->rollInDegrees = newRollInDegrees;
+    myLogoList->thisLogo->pitchInDegrees = newPitchInDegrees;
+    myLogoList->thisLogo->yawInDegrees = newYawInDegrees;
     myLogoList->nextLogo = NULL;
   }
   /*
@@ -776,9 +783,9 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
     myLogoList->nextLogo = (logoList *) malloc(sizeof(logoList));
     myLogoList->nextLogo->thisLogo = (logoDescription *) malloc(sizeof(logoDescription));
     myLogoList->nextLogo->logoID = newID;
-    myLogoList->nextLogo->thisLogo->roll = newRoll;
-    myLogoList->nextLogo->thisLogo->pitch = newPitch;
-    myLogoList->nextLogo->thisLogo->yaw = newYaw;
+    myLogoList->nextLogo->thisLogo->rollInDegrees = newRollInDegrees;
+    myLogoList->nextLogo->thisLogo->pitchInDegrees = newPitchInDegrees;
+    myLogoList->nextLogo->thisLogo->yawInDegrees = newYawInDegrees;
     myLogoList->nextLogo->nextLogo = NULL;
   }
  }
@@ -807,5 +814,70 @@ void freeLogoList(logoList * head)
   }
 }
 
+/* --------------------------------------------------
+   Gets logo description from logo list
+
+   Input Arguments
+   
+   myLogoList           - a pointer to the head of the logo list
+   logoID               - logo ID to find and return description
+
+   Output Arguments
+
+   logo description
+-------------------------------------------------- */
+logoDescription getLogoDescription(logoList * myLogoList, int logoID)
+{
+  while(myLogoList->logoID != logoID)
+  {
+    myLogoList = myLogoList->nextLogo;
+  }
+  return *(myLogoList->thisLogo);
+}
+
+/* --------------------------------------------------
+   Rotates the input vector (myPoint), which is assumed to be from the logo at time 2 (time2LogoDescription)
+   into the frame of reference of the logo at time 1 (time1LogoDescription).
+
+   Input Arguments
+   
+   myPoint              - a point taking at time 2 from logo 2
+   time1LogoDescription - logo description from time 1
+   time2LogoDescription - logo description from time 2
+   
+   Output Arguments
+
+   rotated myPoint into frame of refernece of logo 1
+
+   Notes:  a logo description is defined by a roll, pitch, and yaw.  In order to get the logo into the correct orientation
+   we start with the logo @ 1,0,0.  In other words, the front of the logo points in the 1,0,0 direction and the top is in
+   the 0,0,1 direction.  To rotate this initial logo, we use the euler angles yaw, pitch, roll and calculate the transfer
+   matrix (all +RHR rotations about the axes)
+
+      M = Mz(yaw)*My(pitch)*Mx(roll)
+
+    Rotating back from the logo location to the origin location is simply the reverse process
+
+      M = Mx(-roll)*My(-pitch)*Mz(-yaw)
+
+    So to rotate the 2nd logo into the frame of reference of the 1st, we calculate the transfer matrix to bring logo 2 to the origin and to logo 1 orientation
+
+      M = Mz(yaw_logo1)*My(pitch_logo1)*Mx(roll_logo1)*Mx(-roll_logo2)*My(-pitch_logo2)*Mz(-yaw_logo2)
+-------------------------------------------------- */
+vector rotateLogoPoint(vector myPoint,logoDescription time1LogoDescription,logoDescription time2LogoDescription)
+{
+  double y1, p1, r1, y2, p2, r2;
+
+  // Let's get some shorter variable names to make this cleaner looking
+  y1 = time1LogoDescription.yawInDegrees * M_PI / 180.0;
+  p1 = time1LogoDescription.pitchInDegrees * M_PI / 180.0;
+  r1 = time1LogoDescription.rollInDegrees * M_PI / 180.0;
+
+  y2 = time2LogoDescription.yawInDegrees * M_PI / 180.0;
+  p2 = time2LogoDescription.pitchInDegrees * M_PI / 180.0;
+  r2 = time2LogoDescription.rollInDegrees * M_PI / 180.0;
+
+  return rotateZ(rotateY(rotateX(rotateX(rotateY(rotateZ(myPoint,-y2),-p2),-r2),r1),p1),y1);
+}
 
 
