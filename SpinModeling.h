@@ -67,6 +67,9 @@ typedef struct
   double beta;
 } FOVCorrection;
 
+/*
+ *  Defines description of logo orientation
+ */
 typedef struct logoDescription
 {
   double yaw;
@@ -74,6 +77,9 @@ typedef struct logoDescription
   double roll;
 } logoDescription;
 
+/*
+ *  Defines linked list of logo descriptions
+ */
 typedef struct logoList
 {
   int logoID;

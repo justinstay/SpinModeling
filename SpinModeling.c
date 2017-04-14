@@ -713,9 +713,17 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
 
 }
 
-/*
- *  Initializes logo list.
- */
+/* --------------------------------------------------
+   Initializes logo list.  Note this allocates memory.  The linked list MUST BE FREE'ED at the end.
+
+   Input Arguments
+   
+    NONE
+
+   Output Arguments
+
+   myLogoList     - newly initialized logo list (this and next are both NULL, empty list)
+-------------------------------------------------- */
  logoList * initLogoList()
  {
   logoList * myLogoList;
@@ -726,11 +734,27 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   return myLogoList;
  }
 
- /*
-  *  Adds logo to list
-  */
+ /* --------------------------------------------------
+   Adds a new logo to the logo list.  NOTE:  each node is dynamically allocated
+   and MUST BE FREE'ed with freeLogoList.
+
+   Input Arguments
+   
+   myLogoList   - head pointer to the head of the logo list
+   newID        - (unique) ID for new logo to add.
+   newRoll      - Relative roll for new logo
+   newPitch     - Relative pitch for new logo
+   newYaw       - Relative yaw for new logo
+
+   Output Arguments
+
+   NONE
+-------------------------------------------------- */
  void addLogo(logoList * myLogoList, int newID, double newRoll, double newPitch, double newYaw)
  {
+  /*
+   *  Checks for an empty logo list (when thisLogo is NULL)
+   */
   if (myLogoList->thisLogo == NULL)
   {
     myLogoList->logoID = newID;
@@ -740,6 +764,9 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
     myLogoList->thisLogo->yaw = newYaw;
     myLogoList->nextLogo = NULL;
   }
+  /*
+   *  Otherwise, we simpley find the last node and add a new logo description.
+   */
   else
   {
     while (myLogoList->nextLogo != NULL)
@@ -756,6 +783,17 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   }
  }
 
+/* --------------------------------------------------
+   Frees logo list as each node is dynamically allocated.
+
+   Input Arguments
+   
+   head           - a pointer to the head of the logo list
+
+   Output Arguments
+
+   NONE
+-------------------------------------------------- */
 void freeLogoList(logoList * head)
 {
   logoList * tmpNode;
