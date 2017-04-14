@@ -25,4 +25,4 @@ clean:
 run:
 	./$(EXENAME) | tee output.txt
 analyze:
-	valgrind --leak-check=yes ./$(EXENAME)
+	valgrind --leak-check=yes -v ./$(EXENAME)

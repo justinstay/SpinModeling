@@ -1,4 +1,4 @@
-/*                 Version 2.3.4                 */
+/*                 Version 3.0.0                */
 #include "SpinModeling.h"
 
 // --------------------------------------------------//
@@ -201,7 +201,7 @@ vector correctForFOV(vector point,FOVCorrection myFOVCorrection)
    Corrects for barrel distortion using a simple model.
    See http://stackoverflow.com/questions/6199636/formulas-for-barrel-pincushion-distortion
 
-   There are more complicated ones but this one is simple and seem to does well in matlab.
+   There are more complicated ones but this one is simple and seems to do well in matlab.
    Could very easily incorporate a more complicated method in this funcion.
 
    Input Arguments
@@ -406,7 +406,7 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
     }
 
   
-  // Normalized all 4 points (2 points, 2 times) to the origin and unity.
+  // Normalize all 4 points (2 points, 2 times) to the origin and unity.
   point1Time1   = vectorSubtract(point1Time1,ballCenterTime1);
   point1Time1.z = sqrt(ballRadiusTime1*ballRadiusTime1 - vectorMag(point1Time1)*vectorMag(point1Time1));
   point1Time1   = vectorScalarDivide(point1Time1,vectorMag(point1Time1)); 
@@ -432,15 +432,14 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
       printf("p2t2 x=%f, y=%f, z=%f\n",point2Time2.x,point2Time2.y,point2Time2.z);
     }
 
-if (LIB_SPINMODELING_FOVCORRECTION)
+  if (LIB_SPINMODELING_FOVCORRECTION)
     {
       FOVCorrectionForTime1 = calcFOVCorrection(ballCenterTime1,LIB_SPINMODELING_FIELDOFVIEW_FIRST_IMAGE,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT);
       FOVCorrectionForTime2 = calcFOVCorrection(ballCenterTime2,LIB_SPINMODELING_FIELDOFVIEW_SECOND_IMAGE,LIB_SPINMODELING_NUMBER_OF_PIXELS_WIDTH,LIB_SPINMODELING_NUMBER_OF_PIXELS_HEIGHT);
-
       if (LIB_SPINMODELING_DEBUG)
-	{
-	  printf("alpha t1 = %f, beta t1 = %f, alpha t2 = %f, beta t2 = %f\n",FOVCorrectionForTime1.alpha,FOVCorrectionForTime1.beta,FOVCorrectionForTime2.alpha,FOVCorrectionForTime2.beta);
-	}
+      {
+      printf("alpha t1 = %f, beta t1 = %f, alpha t2 = %f, beta t2 = %f\n",FOVCorrectionForTime1.alpha,FOVCorrectionForTime1.beta,FOVCorrectionForTime2.alpha,FOVCorrectionForTime2.beta);
+      }
 
       point1Time1 = correctForFOV(point1Time1,FOVCorrectionForTime1);
       point2Time1 = correctForFOV(point2Time1,FOVCorrectionForTime1);
@@ -479,7 +478,6 @@ if (LIB_SPINMODELING_FOVCORRECTION)
 
       // Create equal arc lengths at each time by redefining the endpoints but keepin the same midpoint and great circle (defined by the arc)
       point1Time1 = rotateZ(rotateY(rotateZ(rotateY(rotateZ(time1Midpoint,-time1Normal_spherical.theta),-time1Normal_spherical.phi),-LIB_SPINMODELING_ARCLENGTHINDEGREES/2.0*M_PI/180.0),time1Normal_spherical.phi),time1Normal_spherical.theta);
-
       point2Time1 = rotateZ(rotateY(rotateZ(rotateY(rotateZ(time1Midpoint,-time1Normal_spherical.theta),-time1Normal_spherical.phi),LIB_SPINMODELING_ARCLENGTHINDEGREES/2.0*M_PI/180.0),time1Normal_spherical.phi),time1Normal_spherical.theta);
       point1Time2 = rotateZ(rotateY(rotateZ(rotateY(rotateZ(time2Midpoint,-time2Normal_spherical.theta),-time2Normal_spherical.phi),-LIB_SPINMODELING_ARCLENGTHINDEGREES/2.0*M_PI/180.0),time2Normal_spherical.phi),time2Normal_spherical.theta);
       point2Time2 = rotateZ(rotateY(rotateZ(rotateY(rotateZ(time2Midpoint,-time2Normal_spherical.theta),-time2Normal_spherical.phi),LIB_SPINMODELING_ARCLENGTHINDEGREES/2.0*M_PI/180.0),time2Normal_spherical.phi),time2Normal_spherical.theta);
@@ -492,6 +490,20 @@ if (LIB_SPINMODELING_FOVCORRECTION)
       printf("p2t1 x=%f, y=%f, z=%f\n",point2Time1.x,point2Time1.y,point2Time1.z);
       printf("p2t2 x=%f, y=%f, z=%f\n",point2Time2.x,point2Time2.y,point2Time2.z);
     }
+
+  /*
+   *  At this point, we have corrected for barrel distortion and FOV (persepective) and have created
+   *  and normalized two sets of points from the original images.
+   *
+   *  If these sets of points originate from the same logo, then no rotation will occur.  However,
+   *  if the two logos are differente, we need to rotate the 2nd set of points such that they are
+   *  in the same reference frame as the 1st.  Using the list of logo locations, we can caluclate
+   *  what rotation is required.
+   */
+
+
+
+
 
   // Calculate the midpoint of the arc for a point #1 between 2 times.
   // Note, must normalize back to unity.
@@ -700,7 +712,62 @@ if (LIB_SPINMODELING_FOVCORRECTION)
   return mySpinDescription;
 
 }
- 
+
+/*
+ *  Initializes logo list.
+ */
+ logoList * initLogoList()
+ {
+  logoList * myLogoList;
+  myLogoList = (logoList *) malloc(sizeof(logoList));
+  myLogoList->logoID = -1;
+  myLogoList->thisLogo = NULL;
+  myLogoList->nextLogo = NULL;
+  return myLogoList;
+ }
+
+ /*
+  *  Adds logo to list
+  */
+ void addLogo(logoList * myLogoList, int newID, double newRoll, double newPitch, double newYaw)
+ {
+  if (myLogoList->thisLogo == NULL)
+  {
+    myLogoList->logoID = newID;
+    myLogoList->thisLogo = (logoDescription *) malloc(sizeof(logoDescription));
+    myLogoList->thisLogo->roll = newRoll;
+    myLogoList->thisLogo->pitch = newPitch;
+    myLogoList->thisLogo->yaw = newYaw;
+    myLogoList->nextLogo = NULL;
+  }
+  else
+  {
+    while (myLogoList->nextLogo != NULL)
+    {
+      myLogoList = myLogoList->nextLogo;
+    }
+    myLogoList->nextLogo = (logoList *) malloc(sizeof(logoList));
+    myLogoList->nextLogo->thisLogo = (logoDescription *) malloc(sizeof(logoDescription));
+    myLogoList->nextLogo->logoID = newID;
+    myLogoList->nextLogo->thisLogo->roll = newRoll;
+    myLogoList->nextLogo->thisLogo->pitch = newPitch;
+    myLogoList->nextLogo->thisLogo->yaw = newYaw;
+    myLogoList->nextLogo->nextLogo = NULL;
+  }
+ }
+
+void freeLogoList(logoList * head)
+{
+  logoList * tmpNode;
+     
+  while (head != NULL)
+  {
+    free(head->thisLogo);
+    tmpNode = head;
+    head = head->nextLogo;
+    free(tmpNode);
+  }
+}
 
 
 

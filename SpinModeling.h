@@ -1,4 +1,4 @@
-/*                 Version 2.3.4                 */
+/*                 Version 3.0.0                 */
 #ifndef LIB_SPINMODELING
 #define LIB_SPINMODELING
 /* ------------------ #Define Statements ------------------------- */
@@ -28,6 +28,9 @@
 /* ------------------ #Include Statments ------------------------ */
 
 /* ------------------ Type Def Structs -------------------------- */
+/*
+ *  Defines a 3 dimensional vector
+ */
 typedef struct
 {
   double x;
@@ -35,6 +38,9 @@ typedef struct
   double z;
 } vector;
 
+/*
+ *  Defines a 3 dimensional spherical coordinate
+ */
 typedef struct
 {
   double r;  
@@ -42,6 +48,9 @@ typedef struct
   double theta;
 } sphericalCoordinate;
 
+/*
+ *  Defines the final spin description
+ */
 typedef struct
 {
   double spinAxisInDegrees;
@@ -49,11 +58,29 @@ typedef struct
   double spinInRPMs;
 } spinDescription;
 
+/*
+ *  When performing FOV (perspective) correction, these angles are required to correct for that
+ */
 typedef struct
 {
   double alpha;
   double beta;
 } FOVCorrection;
+
+typedef struct logoDescription
+{
+  double yaw;
+  double pitch;
+  double roll;
+} logoDescription;
+
+typedef struct logoList
+{
+  int logoID;
+  logoDescription * thisLogo;
+  struct logoList * nextLogo;
+} logoList;
+
 
 double vectorMag(vector A);
 double vectorDotProduct(vector A, vector B);
@@ -70,5 +97,8 @@ FOVCorrection calcFOVCorrection(vector ballCenter,double FOVInDegrees,int imageW
 vector correctForFOV(vector point,FOVCorrection myFOVCorrection);
 vector correctForBarrelDistortion(vector point,int imageWidth, int imageHeight, double distortionAlpha);
 spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vector ballCenterTime1, double ballRadiusTime1, vector point1Time2, vector point2Time2, vector ballCenterTime2, double ballRadiusTime2, double deltaTimeInSeconds, int handedness);
+logoList * initLogoList();
+void addLogo(logoList * myLogoList, int logoID, double newRoll, double newPitch, double newYaw);
+void freeLogoList(logoList * myLogoList);
 
 #endif

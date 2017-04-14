@@ -29,6 +29,19 @@ int main()
   int indx;
 
   int handedness;
+
+  logoList * myLogoList;
+
+  /*
+   *	Let's define the logo list to use
+   */
+  myLogoList = initLogoList();
+  addLogo(myLogoList,1,0,0,0);
+  addLogo(myLogoList,2,0,90,0);
+  addLogo(myLogoList,3,0,-90,0);
+  addLogo(myLogoList,4,0,0,90);
+  addLogo(myLogoList,5,0,0,-90);
+  addLogo(myLogoList,6,0,180,0);   
   
   // 3 - Sample #3, Khan Adjusted test case
   // 12 - Sample #12, Wil data
@@ -428,6 +441,8 @@ int main()
 	}
       printf("-----------------------------------------------------------------------\n");
     }
+  
+freeLogoList(myLogoList);
   
 printf("Finished program!\n"); 
 
