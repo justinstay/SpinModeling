@@ -153,6 +153,7 @@ FOVCorrection calcFOVCorrection(vector ballCenter,double FOVInDegrees,int imageW
   // d1 is the distance, in pixels from the center of the image to the ball
   double d1;
   // d2 is the distance from the lens to the ball (in pixels) to satisfy the FOV
+  // error maybe!  d2 is the distance along the optic axis to the ball (z coordinate)??
   double d2;
   // d3 is the distance on the xz plane of the projection from the center to the ball
   double d3;
