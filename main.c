@@ -1,4 +1,4 @@
-/*                 Version 3.0.0              */
+/*                 Version 4.0.0              */
 #include <stdio.h>
 #include "SpinModeling.h"
 
@@ -32,18 +32,6 @@ int main()
 
   int time1LogoID;
   int time2LogoID;
-  logoList * myLogoList;
-
-  /*
-   *	Let's define the logo list to use
-   */
-  myLogoList = initLogoList();
-  addLogo(myLogoList,1,0,0,0);
-  addLogo(myLogoList,2,0,90,0);
-  addLogo(myLogoList,3,0,-90,0);
-  addLogo(myLogoList,4,0,0,90);
-  addLogo(myLogoList,5,0,0,-90);
-  addLogo(myLogoList,6,0,180,0);   
   
   // 3 - Sample #3, Khan Adjusted test case
   // 12 - Sample #12, Wil data
@@ -422,7 +410,7 @@ int main()
       // Pass in the parameters as described above.
       // A struct is returned with two paramters:  spinInDegrees and spinAxisInDegrees;
       // Both describe the amount of spin and spin axis between the two images.
-      mySpin = calcSpinAxisAndSpin(point1Time1, point2Time1, ballCenterTime1, ballRadiusTime1, time1LogoID, point1Time2, point2Time2, ballCenterTime2, ballRadiusTime2, time2LogoID, deltaTimeInSeconds, handedness, myLogoList);
+      mySpin = calcSpinAxisAndSpin(point1Time1, point2Time1, ballCenterTime1, ballRadiusTime1, time1LogoID, point1Time2, point2Time2, ballCenterTime2, ballRadiusTime2, time2LogoID, deltaTimeInSeconds, handedness);
 
       printf("I have a spin of %f degrees about a spin axis of %f degrees:  %f RPMs\n",mySpin.spinInDegrees,mySpin.spinAxisInDegrees,mySpin.spinInRPMs);
       printf("Should say\n");
@@ -461,8 +449,6 @@ int main()
 	}
       printf("-----------------------------------------------------------------------\n");
     }
-  
-freeLogoList(myLogoList);
 
 printf("Finished program!\n"); 
 

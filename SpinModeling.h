@@ -1,4 +1,4 @@
-/*                 Version 3.0.0                 */
+/*                 Version 4.0.0                 */
 #ifndef LIB_SPINMODELING
 #define LIB_SPINMODELING
 /* ------------------ #Define Statements ------------------------- */
@@ -103,7 +103,7 @@ vector projectXY(vector A);
 FOVCorrection calcFOVCorrection(vector ballCenter,double FOVInDegrees,int imageWidth,int imageHeight);
 vector correctForFOV(vector point,FOVCorrection myFOVCorrection);
 vector correctForBarrelDistortion(vector point,int imageWidth, int imageHeight, double distortionAlpha);
-spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vector ballCenterTime1, double ballRadiusTime1, int time1LogoID, vector point1Time2, vector point2Time2, vector ballCenterTime2, double ballRadiusTime2, int time2LogoID, double deltaTimeInSeconds, int handedness, logoList * myLogoLIst);
+spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vector ballCenterTime1, double ballRadiusTime1, int time1LogoID, vector point1Time2, vector point2Time2, vector ballCenterTime2, double ballRadiusTime2, int time2LogoID, double deltaTimeInSeconds, int handedness);
 logoList * initLogoList();
 void addLogo(logoList * myLogoList, int logoID, double newRollInDegrees, double newPitchInDegrees, double newYawInDegrees);
 void freeLogoList(logoList * myLogoList);

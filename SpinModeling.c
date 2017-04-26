@@ -1,4 +1,4 @@
-/*                 Version 3.0.0                */
+/*                 Version 4.0.0                */
 #include "SpinModeling.h"
 
 // --------------------------------------------------//
@@ -261,10 +261,12 @@ vector correctForBarrelDistortion(vector point,int imageWidth, int imageHeight, 
    point1Time2     - vector, location in XY space indicating the postion of a point #1 @ time #2
    ballCenterTime1 - vector, location in XY space indicating the center of the ball in time #1
    ballRadiusTime1 - double, radius of ball in image @ time #1
+   time1LogoID     - ID of the ball logo used during time 1
    point2Time1     - vector, location in XY space indicating the postion of a point #2 @ time #1
    point2Time2     - vector, location in XY space indicating the postion of a point #2 @ time #2
    ballCenterTime2 - vector, location in XY space indicating the center of the ball in time #2
    ballRadiusTime2 - double, radius of ball in image @ time #2
+   time2LogoID     - ID of the ball logo used during time 2
    handedness      - int   , 1 for right handed, otherwise left handed.
 
    Output Arguments
@@ -274,7 +276,7 @@ vector correctForBarrelDistortion(vector point,int imageWidth, int imageHeight, 
 
 spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vector ballCenterTime1, double ballRadiusTime1, int time1LogoID,
 				    vector point1Time2, vector point2Time2, vector ballCenterTime2, double ballRadiusTime2, int time2LogoID,
-				    double deltaTimeInSeconds, int handedness, logoList * myLogoList)
+				    double deltaTimeInSeconds, int handedness)
 {
 
   // Defines the midpoint on the arc connection points 1 and time at time 1, and at time 1
@@ -350,6 +352,29 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
   double maxRadius;
   vector correctedCenter;
   int k1;
+
+  // Logo list
+  logoList * myLogoList;
+
+  /*
+   *  Let's define the logo list to use.  Here we have hardcoded it.  Still have to free the list at the end.
+   *  But this is easily extended to be dynamic in the future.
+   */
+  myLogoList = initLogoList();
+  addLogo(myLogoList,1,-154,-38,-40);
+  addLogo(myLogoList,1,0,90,0);
+  addLogo(myLogoList,1,-154,-38,140);
+  addLogo(myLogoList,1,180,-90,0);
+  addLogo(myLogoList,1,154,-38,-140);
+  addLogo(myLogoList,1,-26,38,-40);
+  addLogo(myLogoList,1,154,-38,40);
+  addLogo(myLogoList,1,0,0,90);
+  addLogo(myLogoList,1,0,0,180);
+  addLogo(myLogoList,1,26,38,40);
+  addLogo(myLogoList,1,-26,38,140);
+  addLogo(myLogoList,1,180,0,180);
+  addLogo(myLogoList,1,26,38,-140);
+  addLogo(myLogoList,1,0,0,0);
 
   // Logo descriptions for both times
   logoDescription time1LogoDescription;
@@ -715,6 +740,9 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
       printf("Spin axis = [%f,%f,%f]\n",spinAxis.x,spinAxis.y,spinAxis.z);
       printf("Spin angle = %f degs\n",spinMagInDegrees);
     }
+
+  // Free logo list (dynamically allocated)
+  freeLogoList(myLogoList);  
 
   return mySpinDescription;
 
