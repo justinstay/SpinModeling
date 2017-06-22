@@ -1,4 +1,4 @@
-/*                 Version 4.0.0                */
+/*                 Version 4.1.0                */
 #include "SpinModeling.h"
 
 // --------------------------------------------------//
@@ -361,20 +361,20 @@ spinDescription calcSpinAxisAndSpin(vector point1Time1, vector point2Time1, vect
    *  But this is easily extended to be dynamic in the future.
    */
   myLogoList = initLogoList();
-  addLogo(myLogoList,1,-154,-38,-40);
-  addLogo(myLogoList,1,0,90,0);
-  addLogo(myLogoList,1,-154,-38,140);
-  addLogo(myLogoList,1,180,-90,0);
-  addLogo(myLogoList,1,154,-38,-140);
-  addLogo(myLogoList,1,-26,38,-40);
-  addLogo(myLogoList,1,154,-38,40);
-  addLogo(myLogoList,1,0,0,90);
-  addLogo(myLogoList,1,0,0,180);
-  addLogo(myLogoList,1,26,38,40);
-  addLogo(myLogoList,1,-26,38,140);
-  addLogo(myLogoList,1,180,0,180);
-  addLogo(myLogoList,1,26,38,-140);
-  addLogo(myLogoList,1,0,0,0);
+  addLogo(myLogoList,1,0,270,0);
+  addLogo(myLogoList,2,0,315,135);
+  addLogo(myLogoList,3,0,315,225);
+  addLogo(myLogoList,4,0,315,315);
+  addLogo(myLogoList,5,0,315,45);
+  addLogo(myLogoList,6,0,0,0);
+  addLogo(myLogoList,7,0,0,90);
+  addLogo(myLogoList,8,180,180,0);
+  addLogo(myLogoList,9,0,0,270);
+  addLogo(myLogoList,10,0,45,135);
+  addLogo(myLogoList,11,0,45,225);
+  addLogo(myLogoList,12,0,45,315);
+  addLogo(myLogoList,13,0,45,45);
+  addLogo(myLogoList,14,0,90,0);
 
   // Logo descriptions for both times
   logoDescription time1LogoDescription;

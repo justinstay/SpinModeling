@@ -16,7 +16,7 @@ I have a spin of 89.116131 degrees about a spin axis of 19.689220 degrees:  1485
 Should say
 I have a spin of 89.116131 degrees about a spin axis of 19.689220 degrees:  14852.688460 RPMs
 -----------------------------------------------------------------------
-I have a spin of 360.000000 degrees about a spin axis of -0.000000 degrees:  60000.000000 RPMs
+I have a spin of 0.000000 degrees about a spin axis of -0.000000 degrees:  0.000000 RPMs
 Should say
 I have a spin of 0.000000 degrees about a spin axis of -0.000000 degrees:  0.000000 RPMs
 -----------------------------------------------------------------------
